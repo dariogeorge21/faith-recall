@@ -86,6 +86,7 @@ export default function Game2Page() {
 
       <div className="flex-1 flex items-center justify-center">
         <QuizQuestion
+          key={questions[currentQuestionIndex].id}
           question={questions[currentQuestionIndex]}
           onAnswer={handleAnswer}
           timeLimit={15}
@@ -94,4 +95,3 @@ export default function Game2Page() {
     </div>
   )
 }
-

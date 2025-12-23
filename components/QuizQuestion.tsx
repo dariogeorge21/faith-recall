@@ -1,7 +1,7 @@
 'use client'
 
 import { QuizQuestion as QuizQuestionType } from '@/lib/gameData'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 
 interface QuizQuestionProps {
   question: QuizQuestionType
@@ -16,19 +16,59 @@ export default function QuizQuestion({
   timeLimit,
   disabled = false,
 }: QuizQuestionProps) {
+  // State for current question
   const [timeRemaining, setTimeRemaining] = useState(timeLimit)
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [isAnswered, setIsAnswered] = useState(false)
-  const [startTime] = useState(Date.now())
+  const startTimeRef = useRef<number>(Date.now())
+  const questionIdRef = useRef<number>(question.id)
+  const isAnsweredRef = useRef<boolean>(false)
 
+  // Keep ref in sync with state
   useEffect(() => {
-    if (disabled || isAnswered) return
+    isAnsweredRef.current = isAnswered
+  }, [isAnswered])
+
+  // Reset all state when question changes
+  useEffect(() => {
+    // Check if question has actually changed
+    if (questionIdRef.current !== question.id) {
+      // Reset all state for new question
+      setTimeRemaining(timeLimit)
+      setSelectedAnswer(null)
+      setIsAnswered(false)
+      isAnsweredRef.current = false
+      startTimeRef.current = Date.now()
+      questionIdRef.current = question.id
+    }
+  }, [question.id, timeLimit])
+
+  // Handle timeout callback
+  const handleTimeout = useCallback(() => {
+    if (disabled || isAnsweredRef.current) return
+
+    setIsAnswered(true)
+    isAnsweredRef.current = true
+    setTimeout(() => {
+      onAnswer('', timeLimit) // Timeout = wrong answer
+    }, 300)
+  }, [disabled, timeLimit, onAnswer])
+
+  // Timer effect - resets when question changes
+  useEffect(() => {
+    // Reset timer when question changes
+    setTimeRemaining(timeLimit)
+    startTimeRef.current = Date.now()
+    setIsAnswered(false)
+    isAnsweredRef.current = false
+    
+    if (disabled) return
 
     const interval = setInterval(() => {
       setTimeRemaining((prev) => {
         if (prev <= 1) {
           clearInterval(interval)
-          if (!isAnswered) {
+          if (!isAnsweredRef.current) {
             handleTimeout()
           }
           return 0
@@ -38,7 +78,7 @@ export default function QuizQuestion({
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [disabled, isAnswered])
+  }, [question.id, disabled, timeLimit, handleTimeout])
 
   const handleAnswer = (answer: string) => {
     if (disabled || isAnswered) return
@@ -46,20 +86,12 @@ export default function QuizQuestion({
     const timeTaken = timeLimit - timeRemaining
     setSelectedAnswer(answer)
     setIsAnswered(true)
+    isAnsweredRef.current = true
 
     // Show feedback for 300-500ms, then auto-advance
     setTimeout(() => {
       onAnswer(answer, timeTaken)
     }, 400)
-  }
-
-  const handleTimeout = () => {
-    if (disabled || isAnswered) return
-
-    setIsAnswered(true)
-    setTimeout(() => {
-      onAnswer('', timeLimit) // Timeout = wrong answer
-    }, 300)
   }
 
   const isCorrect = selectedAnswer === question.correctAnswer
@@ -135,4 +167,3 @@ export default function QuizQuestion({
     </div>
   )
 }
-
