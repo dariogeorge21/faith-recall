@@ -49,11 +49,11 @@ export default function ResultsPage() {
 
   const handlePlayAgain = () => {
     reset()
-    router.push('/input')
+    router.push('/')
   }
 
   const handleViewLeaderboard = () => {
-    router.push('/score')
+    router.push('/leaderboard')
   }
 
   return (
@@ -135,7 +135,7 @@ export default function ResultsPage() {
             onClick={handlePlayAgain}
             className="flex-1 py-4 text-xl md:text-2xl font-bold bg-burgundy-600 text-white rounded-lg hover:bg-burgundy-700 transition-all touch-manipulation"
           >
-            Play Again
+            Home
           </button>
           <button
             onClick={handleViewLeaderboard}
