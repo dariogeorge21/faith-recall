@@ -45,6 +45,41 @@ Total gameplay time: **180 seconds**
 
 ---
 
+## 🔄 Complete Game Flow Sequence
+
+The game follows this exact sequence with **automatic transitions** (no manual "Next" buttons between stages):
+
+1. **Player Registration**
+   * Player enters name and selects state
+   * → **Automatic transition** to Security Code Entry
+
+2. **Security Code Entry** (Before Game 1)
+   * Player enters their chosen 6-digit security code
+   * Code is saved in state
+   * → **Automatic transition** to Game 1
+
+3. **Game 1** (Saints & Images Memory Match)
+   * Runs for up to 90 seconds
+   * Ends when: all matches completed OR timer expires
+   * → **Automatic transition** to Game 2 (no confirmation required)
+
+4. **Game 2** (Emoji Bible Story Finder)
+   * Runs for 90 seconds
+   * Ends when timer expires
+   * → **Automatic transition** to Security Code Verification
+
+5. **Security Code Verification** (After Game 2)
+   * Player must re-enter their security code
+   * **If CORRECT:** → **Automatic transition** to Results
+   * **If WRONG/FORGOTTEN:** → Punishment flow → Results
+
+6. **Results Page**
+   * Displays final scores
+   * **Automatically saves score to Supabase** when displayed
+   * Includes "View Leaderboard" button
+
+---
+
 ## 🧠 GAME 1 — *Saints & Images Memory Match*
 
 ### Core Concept
@@ -106,7 +141,8 @@ Use the following saint image-name pairs (stored in frontend application code as
 ### Time
 
 * Timer: **90 seconds**
-* Auto move to Game 2 when time ends
+* **Automatic Transition:** When Game 1 ends (either by completing all matches OR when the 90-second timer expires), **immediately transition to Game 2** with no user confirmation required
+* Do NOT wait for user confirmation between games
 
 ---
 
@@ -129,6 +165,11 @@ Players identify **Bible stories represented using emojis**, answering **MCQ que
   * 4 multiple-choice options
   * One correct answer
 * Player taps answer (touch/mouse only)
+
+### Game 2 Completion
+
+* When Game 2 ends (after 90 seconds), **immediately show the security code verification screen**
+* No manual "Continue" button required - automatic transition
 
 ---
 
@@ -166,49 +207,59 @@ D. Jesus Walks on Water
 
 ---
 
-## 👤 Player Input (Before Game Start)
+## 👤 Player Registration
 
 * Name → selectable UI (NO keyboard)
 * Region → **All 28 Indian States**
 * Validate before proceeding
+* After validation, immediately proceed to Security Code Entry
 
 ---
 
-## 🔐 Security Feature (Same as Previous Game)
+## 🔐 Security Code Entry (Before Game 1)
 
-### Security Code Generation
+### Pre-Game Security Code Setup
 
-* Generate **random 6-digit numeric code**
-* Show message: **“Remember this code!”**
-* Large typography
-* Display for **minimum 5 seconds**
-* Animate countdown:
-  **5 → 4 → 3 → 2 → 1 → 0**
-* Store in Zustand / Context
+* Player must **enter their chosen 6-digit numeric security code**
+* Use custom numeric keypad UI (touch/mouse only, NO keyboard)
+* Code entry is required before Game 1 can begin
+* Store entered code in Zustand / Context for later verification
+* Once code is entered and saved, **Game 1 starts automatically** (no manual "Start" button)
 
 ---
 
-## 🔎 Post-Game Verification (`/verify`)
+## 🔎 Security Code Verification (After Game 2)
 
-### Step 1: Code Check
+### Flow: Game 2 End → Verification → Results
 
-* Numeric keypad UI (custom)
-* Max 2 attempts
+When Game 2 ends, player must re-enter their security code to view results.
 
-### Step 2: Punishment Flow
+### Step 1: Code Verification
 
-If failed twice OR user clicks **Forgot Code?**:
+* Show security code verification screen immediately after Game 2 ends
+* Player must re-enter the 6-digit security code they entered before Game 1
+* Use custom numeric keypad UI (touch/mouse only, NO keyboard)
+* Max 2 attempts to enter correct code
 
-* Message:
-  **“Recite 5 Hail Marys to continue”**
-* 5 large checkboxes:
+### Step 2: Verification Outcomes
 
-  * Hail Mary 1 → 5
-* Continue button activates only when all checked
+**If code is CORRECT:**
+* Show the results page immediately (automatic transition)
+* No additional steps required
+
+**If code is WRONG (after 2 failed attempts) OR user clicks "Forgot Code?":**
+* Show punishment flow:
+  * Message: **"Recite 5 Hail Marys to continue"**
+  * 5 large checkboxes:
+    * Hail Mary 1 → 5
+  * Continue button activates only when all checked
+* After punishment is completed, show the results page
 
 ---
 
 ## 🏁 Final Results Screen
+
+### Display Information
 
 * Show:
 
@@ -217,10 +268,22 @@ If failed twice OR user clicks **Forgot Code?**:
   * Game 1 Score
   * Game 2 Score
   * Total Score
+
+### Automatic Score Submission
+
+* **Score is automatically saved to Supabase database** when the results page is displayed
+* Save to `players` table with: name, region, score (total score), created_at
+* No manual "Submit Score" button required
+* Handle submission errors gracefully (show error message if save fails, but still display results)
+
+### Navigation Options
+
 * Buttons:
 
-  * **Play Again**
-  * **View Leaderboard**
+  * **Play Again** - Resets game and returns to Player Registration
+  * **View Leaderboard** - Navigates to leaderboard page (`/score`)
+
+### State Management
 
 On navigation away:
 
