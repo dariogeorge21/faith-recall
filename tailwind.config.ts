@@ -65,6 +65,9 @@ const config: Config = {
           '100%': { opacity: '0', transform: 'scale(0.8)' },
         },
       },
+      gridTemplateColumns: {
+        '13': 'repeat(13, minmax(0, 1fr))',
+      },
     },
   },
   plugins: [],

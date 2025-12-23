@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useGameStore } from '@/store/gameStore'
-import NameInput from '@/components/NameInput'
+import VoiceNameInput from '@/components/VoiceNameInput'
 import StateSelector from '@/components/StateSelector'
 
 export default function InputPage() {
@@ -60,33 +60,33 @@ export default function InputPage() {
   }, [name, region, error, setPlayerName, setPlayerRegion, router])
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-8">
-      <div className="w-full max-w-2xl">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-6xl font-bold text-burgundy-700 mb-4">
+    <div className="min-h-screen flex flex-col items-center justify-center p-8">
+      <div className="w-full" style={{ maxWidth: '1400px' }}>
+        <div className="text-center mb-10">
+          <h1 className="text-6xl font-bold text-burgundy-700 mb-4">
             Faith Recall
           </h1>
-          <p className="text-2xl md:text-3xl text-gold-600 font-semibold">
+          <p className="text-4xl text-gold-600 font-semibold">
             JAAGO
           </p>
-          <p className="text-xl md:text-2xl text-burgundy-600 mt-4">
+          <p className="text-3xl text-burgundy-600 mt-4">
             Church Event Game
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 mb-6">
-          <div className="mb-6">
-            <label className="block text-xl md:text-2xl font-bold text-burgundy-700 mb-4">
+        <div className="bg-white rounded-2xl shadow-2xl p-10 mb-6">
+          <div className="mb-8">
+            <label className="block text-3xl font-bold text-burgundy-700 mb-6">
               Enter Your Name
             </label>
-            <NameInput
+            <VoiceNameInput
               value={name}
               onChange={handleNameChange}
             />
           </div>
 
-          <div className="mb-6">
-            <label className="block text-xl md:text-2xl font-bold text-burgundy-700 mb-4">
+          <div className="mb-8">
+            <label className="block text-3xl font-bold text-burgundy-700 mb-6">
               Select Your State
             </label>
             <StateSelector
@@ -96,13 +96,13 @@ export default function InputPage() {
           </div>
 
           {error && (
-            <div className="mb-4 p-4 bg-red-100 border-2 border-red-400 rounded-lg text-red-700 text-lg font-semibold text-center">
+            <div className="mb-6 p-6 bg-red-100 border-2 border-red-400 rounded-lg text-red-700 text-2xl font-semibold text-center">
               {error}
             </div>
           )}
 
           {name.trim() && region && !error && (
-            <div className="text-center text-lg text-green-600 font-semibold animate-pulse">
+            <div className="text-center text-2xl text-green-600 font-semibold animate-pulse">
               ✓ Ready to continue...
             </div>
           )}
@@ -111,4 +111,3 @@ export default function InputPage() {
     </div>
   )
 }
-
