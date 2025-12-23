@@ -92,20 +92,20 @@ A **memory matching game** where players match **Saint images/photos** with thei
 
 Use the following saint image-name pairs (stored in frontend application code as a JavaScript/TypeScript constant):
 
-| Saint                     | Image Reference                    |
+| Saint                     | Image Path                         |
 | ------------------------- | ---------------------------------- |
-| Saint Peter               | Image URL/path for Saint Peter    |
-| Saint Sebastian           | Image URL/path for Saint Sebastian|
-| Saint Francis of Assisi   | Image URL/path for Saint Francis  |
-| Saint Thérèse of Lisieux  | Image URL/path for Saint Thérèse  |
-| Saint Matthew             | Image URL/path for Saint Matthew  |
-| Saint Mark                | Image URL/path for Saint Mark     |
-| Saint Luke                | Image URL/path for Saint Luke     |
-| Saint John the Evangelist | Image URL/path for Saint John     |
-| Saint Paul                | Image URL/path for Saint Paul     |
-| Saint Joseph              | Image URL/path for Saint Joseph   |
+| Saint Peter               | `/images/saints/peter.png`        |
+| Saint Sebastian           | `/images/saints/sebastian.png`    |
+| Saint Francis of Assisi   | `/images/saints/francis.png`      |
+| Saint Thérèse of Lisieux  | `/images/saints/therese.png`      |
+| Saint Matthew             | `/images/saints/matthew.png`      |
+| Saint Mark                | `/images/saints/mark.png`         |
+| Saint Luke                | `/images/saints/luke.png`         |
+| Saint John the Evangelist | `/images/saints/john.png`         |
+| Saint Paul                | `/images/saints/paul.png`         |
+| Saint Joseph              | `/images/saints/joseph.png`       |
 
-**Note:** Each Saint should have an associated image/photo file (stored in the frontend application's assets or referenced via URL). The image cards display these visual representations, while the name cards display the Saint names as readable text.
+**Note:** Each Saint should have an associated PNG image file stored in `/public/images/saints/` directory. The image cards display these visual representations, while the name cards display the Saint names as readable text. See the **Data Architecture** section for TypeScript structure examples.
 
 ---
 
@@ -114,27 +114,100 @@ Use the following saint image-name pairs (stored in frontend application code as
 1. **Initial Display:** All cards on both sides are **revealed briefly** (approximately 1 second) to allow players to memorize positions
 2. **Shuffle & Hide:** Cards are shuffled and then hidden/flipped face-down
 3. **First Selection:** Player clicks/taps to choose **ONE card from EITHER side** (image side OR name side)
-4. **Dynamic Reveal Logic:**
-   * If player selects a card from the **image side** → Reveal/display **ALL cards on the name side** (show all Saint names)
-   * If player selects a card from the **name side** → Reveal/display **ALL cards on the image side** (show all Saint images)
-   * The selected card remains highlighted/selected
-5. **Second Selection:** Player then selects the matching card from the now-revealed opposite side
-6. **Validation:**
-   * Check if the two selected cards correctly match (Saint image ↔ corresponding Saint name)
-   * **Correct match** → cards lock & glow green, remove/mark both cards as matched
-   * **Incorrect match** → brief red shake, hide cards again and continue
-7. **Repeat:** Continue until all pairs are matched or time runs out
+
+#### Dynamic Reveal Mechanism - Card State Management
+
+**When first card is selected:**
+* **Selected card:** Remains highlighted/selected with visual indicator (e.g., border glow)
+* **Opposite side cards:** ALL cards on opposite side reveal and **STAY REVEALED** until match validation completes
+* **Same side cards:** Remain hidden (except the selected card)
+
+**Changing First Selection:**
+* Player **CAN change** their first selection by clicking another card on the **SAME side**
+* When first selection changes:
+  * Previous selection unhighlights
+  * New card becomes highlighted
+  * Opposite side cards remain revealed (no re-hiding/re-revealing)
+
+**Multiple Selections During Reveal:**
+* Once opposite side is revealed, player can **ONLY click ONE card** from the revealed side
+* After second selection is made, **ALL clicks are disabled** until validation animation completes
+* If player somehow clicks multiple cards rapidly, only the **FIRST click** on the revealed side counts
+
+4. **Second Selection:** Player then selects the matching card from the now-revealed opposite side
+
+#### Match Validation - Enhanced Specification
+
+**Validation Timing & Sequence:**
+1. **Immediate validation** occurs after second card selection (no delay before checking)
+2. **Visual feedback delay** of 800ms to show result before state changes
+3. **Sequence:**
+   * Second card selected → Immediate validation check
+   * Show visual feedback (green glow OR red shake) for 800ms
+   * Then execute result action (remove/hide cards)
+
+**Correct Match Behavior:**
+* Both matched cards: Lock in place with **green glow effect** for 800ms
+* After 800ms: Cards **fade out and disappear** from the board (removed completely)
+* Empty spaces remain where cards were removed
+* Board does NOT re-shuffle or re-center after removal
+
+**Incorrect Match Reset:**
+* Both selected cards: Show **red shake animation** for 800ms
+* After 800ms animation completes:
+  * BOTH selected cards hide/flip back to face-down
+  * ALL cards on the opposite side hide/flip back to face-down
+  * Board returns to initial state (all cards hidden)
+  * Player must start fresh with new first selection
+
+5. **Repeat:** Continue until all pairs are matched or time runs out
 
 ---
 
-### Scoring (Game 1)
+### Scoring (Game 1) - Enhanced Specification
 
-* Scoring is based on **time to solve** each match
-* Correct match: + points (amount depends on how quickly the match was made)
-* Faster match = higher score (shorter time = more points)
-* Consecutive correct matches → combo multiplier
-* Wrong match → small penalty
-* Score must vary enough to avoid ties
+#### Time Measurement
+
+* **Global timer:** 90-second countdown starts when Game 1 begins (after initial 1-second reveal)
+* **Per-match timer:** Starts when FIRST card is selected for each match attempt
+* **Per-match timer resets:** When incorrect match occurs, timer resets for next attempt
+
+#### Detailed Scoring Formula
+
+**Base Points Calculation:**
+```
+Base Points = 1000 - (match_time_seconds × 50)
+Minimum Base Points = 100 (even if match takes >18 seconds)
+```
+
+**Combo Multiplier:**
+* Consecutive correct matches increase multiplier
+* Multiplier progression: **1.0x → 1.2x → 1.5x → 2.0x → 2.5x** (caps at 2.5x)
+* Resets to 1.0x after **ANY incorrect match**
+
+**Final Match Score:**
+```
+Match Score = Base Points × Combo Multiplier
+```
+
+**Wrong Match Penalty:**
+* Fixed penalty: **-150 points** per incorrect attempt
+* Score CAN go negative during gameplay (minimum total score = 0 at game end)
+* Penalty applies immediately when incorrect match is detected
+
+#### Non-linear Variation to Avoid Ties
+
+**Time-based micro-variation:**
+```
+Final Match Score += (milliseconds % 10)
+```
+This adds 0-9 points based on milliseconds component of match time, creating natural variation without affecting core scoring logic.
+
+**Total Game 1 Score:**
+```
+Total Score = SUM(all Match Scores) - SUM(all Penalties)
+Minimum Total Score = 0 (cannot be negative at game end)
+```
 
 ---
 
@@ -156,24 +229,83 @@ Players identify **Bible stories represented using emojis**, answering **MCQ que
 
 ---
 
-### Gameplay Flow
+### Question Presentation Flow
 
-* Timer: **90 seconds**
-* Each question:
+**Question Sequence:**
+* Questions are shown **one at a time sequentially**
+* Players **cannot skip questions** - must answer or wait for timeout
+* Questions are presented in **randomized order** (shuffled at game start)
+* If a player doesn't answer within the time limit, it is **treated as a wrong answer** (0 points)
 
-  * Emoji sequence representing a Bible story
-  * 4 multiple-choice options
-  * One correct answer
-* Player taps answer (touch/mouse only)
+**Question Pool:**
+* **Total of 6 questions** exist in the question bank
+* **All 6 questions are shown** during the 90-second game
+* Each question has a **15-second individual timer**
+* If a player answers all 6 questions before 90 seconds, the game continues until the 90-second total timer expires or all questions are completed (whichever comes first)
+
+**Question Display:**
+* **No question counter** is displayed (e.g., no "Question 3 of 6")
+* Emoji sequence is displayed **all at once** (no animation or reveal)
+* **Auto-advance** to next question after answer feedback - no "Next Question" button
+
+---
+
+### Answer Selection and Validation
+
+**Answer Feedback:**
+* Feedback is shown **immediately after selection**
+* A **flicker/flash animation** plays on the selected answer button
+* **Visual color coding**: Green for correct ✅, Red for incorrect ❌
+* Feedback is displayed for **300-500ms** before auto-advancing to next question
+
+**Answer Locking:**
+* Players **cannot change their answer** once selected
+* **No "Submit" button** - answer is submitted immediately on click
+* Once clicked, the answer is locked and feedback is shown
+
+**Timeout Handling:**
+* If the 15-second question timer expires without an answer, it is **treated as a wrong answer** (0 points)
+* Unanswered questions **count as wrong** in the final score
+* The game **auto-advances** to the next question (no answer is recorded, just 0 points)
+
+---
+
+### Time-Based Scoring - Enhanced Specification
+
+**Time Measurement:**
+* Timer starts **from the moment the question is displayed** on screen
+* Each question has a **maximum of 15 seconds** (individual timer)
+* The overall game has a **90-second total limit** (6 questions × 15 seconds = 90 seconds max)
+
+**Scoring Formula:**
+* **Base points per question**: 1000 points
+* **Time-to-points conversion**: `1000 - (time_in_seconds × 50)`
+  * Example: Answer in 3 seconds = 1000 - (3 × 50) = **850 points**
+  * Example: Answer in 10 seconds = 1000 - (10 × 50) = **500 points**
+  * Example: Answer in 15 seconds = 1000 - (15 × 50) = **250 points**
+* **Minimum points for correct answer**: 250 points (if answered at 15 seconds)
+* **No internal difficulty scaling** - all questions worth the same base points
+
+**Wrong Answer Penalty:**
+* Wrong answer = **0 points** (no negative penalty)
+* Unanswered questions (timeout) = **0 points** (treated as wrong)
+* No deduction from total score
+
+**Total Game 2 Score:**
+```
+Total Score = SUM(all correct answer points)
+```
+
+---
 
 ### Game 2 Completion
 
-* When Game 2 ends (after 90 seconds), **immediately show the security code verification screen**
+* When Game 2 ends (after 90 seconds OR all 6 questions completed), **immediately show the security code verification screen**
 * No manual "Continue" button required - automatic transition
 
 ---
 
-### Example
+### Example Question
 
 ```
 🌊 ➗ ➡️ 🚶‍♂️
@@ -181,19 +313,9 @@ What is the story?
 
 A. Jonah and the Whale  
 B. Moses parts the Red Sea ✅  
-C. Noah’s Ark  
+C. Noah's Ark  
 D. Jesus Walks on Water
 ```
-
----
-
-### Scoring (Game 2)
-
-* Scoring is based on **time to solve** each question
-* Correct answer → points (amount depends on how quickly the answer was selected)
-* Faster response → higher score (shorter time = more points)
-* Wrong answer → no points (no hard penalty)
-* Difficulty scaling internally
 
 ---
 
@@ -324,6 +446,60 @@ The database should **only be used for leaderboard functionality**. All game que
 * `created_at` (timestamp, auto-generated)
 
 **Note:** This is the only table needed. All game questions and content are stored in frontend code, not in the database.
+
+---
+
+## 📦 Data Architecture
+
+### Image Storage Location
+
+**Saint Images (Game 1):**
+* Saint images stored in **`/public/images/saints/`** directory
+* Image format: **PNG** (preferred for transparency and quality)
+* Example path: `/public/images/saints/peter.png`
+
+### Data Structure Examples
+
+**Saint Pairs (Game 1):**
+```typescript
+const saints = [
+  { 
+    id: 1,
+    name: 'Saint Peter', 
+    image: '/images/saints/peter.png' 
+  },
+  { 
+    id: 2,
+    name: 'Saint Francis of Assisi', 
+    image: '/images/saints/francis.png' 
+  },
+  // ... more saints (10 total)
+];
+```
+
+**Bible Story Questions (Game 2):**
+```typescript
+const questions = [
+  {
+    id: 1,
+    emojis: ['🌊', '➗', '➡️', '🚶‍♂️'],
+    question: 'What is the story?',
+    options: [
+      { label: 'A', text: 'Jonah and the Whale' },
+      { label: 'B', text: 'Moses parts the Red Sea' },
+      { label: 'C', text: 'Noah\'s Ark' },
+      { label: 'D', text: 'Jesus Walks on Water' }
+    ],
+    correctAnswer: 'B'
+  },
+  // ... 5 more questions (6 total)
+];
+```
+
+**Important Notes:**
+* All game data (saints, questions) stored in **frontend code** (TypeScript/JavaScript constants)
+* **No database queries** for game content
+* Only the `players` table in Supabase is used for leaderboard functionality
 
 ---
 
