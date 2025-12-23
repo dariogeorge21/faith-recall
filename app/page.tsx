@@ -15,7 +15,7 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-8">
+    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4 md:p-8">
       <div className="w-full max-w-3xl text-center">
         {/* JAAGO Logo */}
         <div className="mb-8 flex justify-center">
@@ -50,12 +50,7 @@ export default function LandingPage() {
           >
             Start Game
           </button>
-          <button
-            onClick={handleViewLeaderboard}
-            className="flex-1 py-6 text-2xl md:text-3xl font-bold bg-burgundy-600 text-white rounded-xl shadow-lg hover:bg-burgundy-700 active:scale-95 transition-all touch-manipulation"
-          >
-            Leaderboard
-          </button>
+          
         </div>
       </div>
     </div>
