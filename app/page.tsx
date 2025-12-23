@@ -1,114 +1,92 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useGameStore } from '@/store/gameStore'
-import NameInput from '@/components/NameInput'
-import StateSelector from '@/components/StateSelector'
 
-export default function HomePage() {
+export default function LandingPage() {
   const router = useRouter()
-  const { playerName, playerRegion, setPlayerName, setPlayerRegion } = useGameStore()
-  const [name, setName] = useState(playerName)
-  const [region, setRegion] = useState(playerRegion)
-  const [error, setError] = useState('')
 
-  useEffect(() => {
-    // Reset game state when landing on registration
-    useGameStore.getState().reset()
-  }, [])
-
-  const handleNameChange = (value: string) => {
-    setName(value)
-    setError('')
+  const handleStartGame = () => {
+    router.push('/input')
   }
 
-  const handleRegionChange = (value: string) => {
-    setRegion(value)
-    setError('')
+  const handleViewLeaderboard = () => {
+    router.push('/score')
   }
-
-  const handleContinue = () => {
-    if (!name.trim()) {
-      setError('Please enter your name')
-      return
-    }
-    if (!region) {
-      setError('Please select your state')
-      return
-    }
-
-    setPlayerName(name.trim())
-    setPlayerRegion(region)
-    
-    // Auto-transition to security code entry
-    router.push('/security-code')
-  }
-
-  // Auto-continue when both fields are filled (as per requirements)
-  useEffect(() => {
-    if (name.trim() && region && !error) {
-      const timer = setTimeout(() => {
-        if (name.trim() && region) {
-          setPlayerName(name.trim())
-          setPlayerRegion(region)
-          router.push('/security-code')
-        }
-      }, 1000) // 1 second delay to show validation
-      return () => clearTimeout(timer)
-    }
-  }, [name, region, error, setPlayerName, setPlayerRegion, router])
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-8">
-      <div className="w-full max-w-2xl">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-6xl font-bold text-burgundy-700 mb-4">
+      <div className="w-full max-w-4xl text-center">
+        {/* Main Title */}
+        <div className="mb-12">
+          <h1 className="text-5xl md:text-7xl font-bold text-burgundy-700 mb-6 animate-fade-in">
             Faith Recall
           </h1>
-          <p className="text-2xl md:text-3xl text-gold-600 font-semibold">
+          <p className="text-3xl md:text-5xl text-gold-600 font-semibold mb-4">
             JAAGO
           </p>
-          <p className="text-xl md:text-2xl text-burgundy-600 mt-4">
+          <p className="text-xl md:text-3xl text-burgundy-600">
             Church Event Game
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 mb-6">
-          <div className="mb-6">
-            <label className="block text-xl md:text-2xl font-bold text-burgundy-700 mb-4">
-              Enter Your Name
-            </label>
-            <NameInput
-              value={name}
-              onChange={handleNameChange}
-            />
-          </div>
-
-          <div className="mb-6">
-            <label className="block text-xl md:text-2xl font-bold text-burgundy-700 mb-4">
-              Select Your State
-            </label>
-            <StateSelector
-              value={region}
-              onChange={handleRegionChange}
-            />
-          </div>
-
-          {error && (
-            <div className="mb-4 p-4 bg-red-100 border-2 border-red-400 rounded-lg text-red-700 text-lg font-semibold text-center">
-              {error}
+        {/* Game Description */}
+        <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 mb-8">
+          <div className="space-y-6 text-lg md:text-2xl text-burgundy-700">
+            <p className="font-semibold">
+              Test your memory and knowledge of Catholic faith!
+            </p>
+            <div className="border-t-2 border-burgundy-200 pt-6">
+              <h2 className="text-2xl md:text-3xl font-bold text-burgundy-700 mb-4">
+                Game Features:
+              </h2>
+              <ul className="space-y-3 text-left max-w-2xl mx-auto">
+                <li className="flex items-start gap-3">
+                  <span className="text-gold-600 text-2xl">🎮</span>
+                  <span><strong>Game 1:</strong> Match saints with their images (90 seconds)</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-gold-600 text-2xl">📖</span>
+                  <span><strong>Game 2:</strong> Identify Bible stories from emojis (90 seconds)</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-gold-600 text-2xl">🏆</span>
+                  <span>Compete on the leaderboard for top scores</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-gold-600 text-2xl">⏱️</span>
+                  <span>Total gameplay: 180 seconds</span>
+                </li>
+              </ul>
             </div>
-          )}
+          </div>
+        </div>
 
-          {name.trim() && region && !error && (
-            <div className="text-center text-lg text-green-600 font-semibold animate-pulse">
-              ✓ Ready to continue...
-            </div>
-          )}
+        {/* Action Buttons */}
+        <div className="flex flex-col md:flex-row gap-4 md:gap-6 max-w-2xl mx-auto">
+          <button
+            onClick={handleStartGame}
+            className="flex-1 py-6 text-2xl md:text-3xl font-bold bg-gold-500 text-white rounded-xl shadow-lg hover:bg-gold-600 active:scale-95 transition-all touch-manipulation"
+          >
+            🎯 Start Game
+          </button>
+          <button
+            onClick={handleViewLeaderboard}
+            className="flex-1 py-6 text-2xl md:text-3xl font-bold bg-burgundy-600 text-white rounded-xl shadow-lg hover:bg-burgundy-700 active:scale-95 transition-all touch-manipulation"
+          >
+            🏆 View Leaderboard
+          </button>
+        </div>
+
+        {/* Instructions */}
+        <div className="mt-8 text-sm md:text-base text-burgundy-600 max-w-2xl mx-auto">
+          <p className="mb-2">
+            💡 <strong>Tip:</strong> All interactions use touch/mouse - no keyboard needed!
+          </p>
+          <p>
+            Have fun and may the best player win! 🙏
+          </p>
         </div>
       </div>
     </div>
   )
 }
-

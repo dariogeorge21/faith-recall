@@ -185,7 +185,7 @@ export default function LeaderboardPage() {
             onClick={() => router.push('/')}
             className="px-8 py-4 text-xl md:text-2xl font-bold bg-burgundy-600 text-white rounded-lg hover:bg-burgundy-700 transition-all touch-manipulation"
           >
-            Back to Game
+            Back to Home
           </button>
         </div>
       </div>

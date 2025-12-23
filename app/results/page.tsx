@@ -49,7 +49,7 @@ export default function ResultsPage() {
 
   const handlePlayAgain = () => {
     reset()
-    router.push('/')
+    router.push('/input')
   }
 
   const handleViewLeaderboard = () => {
