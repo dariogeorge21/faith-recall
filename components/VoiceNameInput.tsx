@@ -34,13 +34,22 @@ export default function VoiceNameInput({
           </button>
         </>
       ) : (
-        <input
-          ref={inputRef}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="Enter your name"
-          className="w-full rounded-xl bg-white/10 border border-white/20 px-4 py-4 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-amber-400"
-        />
+        <>
+          <input
+            ref={inputRef}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder="Enter your name"
+            className="w-full rounded-xl bg-white/10 border border-white/20 px-4 py-4 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-amber-400"
+          />
+
+          <button
+            onClick={() => setKeyboard(false)}
+            className="mt-2 text-sm text-blue-400 hover:underline"
+          >
+            Use voice instead
+          </button>
+        </>
       )}
     </div>
   )

@@ -159,8 +159,8 @@ export default function Game1Page() {
       </div>
 
       <div className="flex-1 px-6 pb-6">
-        <div className="max-w-5xl mx-auto bg-white/[0.05] rounded-3xl">
-          <div className="grid grid-cols-2 gap-4 p-5 max-h-[70vh] overflow-y-auto">
+<div className="max-w-xl mx-auto min-h-[70vh] grid grid-cols-400 gap-40 p-50 bg-white/[0.05] rounded-1x1">
+          <div className="grid grid-cols-2 gap-12 p-5 max-h-[80vh] overflow-y-auto">
             <div className="flex flex-col gap-3">
               {leftCards.map((c, i) => (
                 <SaintCard

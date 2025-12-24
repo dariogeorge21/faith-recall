@@ -27,35 +27,45 @@ export default function InputPage() {
     router.push('/security-code')
   }
 
+  const canStart = name && region
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#060b1e] via-[#070b14] to-black px-4">
 
-      <div className="w-full max-w-md rounded-[30px] bg-white/[0.06] backdrop-blur-2xl border border-white/10 shadow-[0_40px_120px_rgba(0,0,0,0.9)] px-6 py-8">
+      {/* Animated Card */}
+      <div className="animate-fade-up w-full max-w-md rounded-[32px] bg-white/[0.06] backdrop-blur-2xl border border-white/10 shadow-[0_50px_140px_rgba(0,0,0,0.85)] px-7 py-9">
 
         {/* Header */}
-        <div className="text-center mb-7">
-          <h1 className="text-3xl font-extrabold text-white">Profile Setup</h1>
-          <p className="mt-1 text-xs tracking-widest uppercase text-amber-400">
-            ✨ Prepare for the challenge ✨
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-extrabold text-white tracking-tight">
+            Profile Setup
+          </h1>
+          <p className="mt-2 text-xs tracking-[0.35em] uppercase text-amber-400">
+            Prepare for the Challenge
           </p>
         </div>
 
-        {/* Name */}
-        <div className="mb-6">
-          <p className="text-sm text-white/70 mb-2">Player Name</p>
+        {/* Player Name */}
+        <div className="mb-7">
+          <label className="block text-sm text-white/70 mb-2">
+            Player Name
+          </label>
           <VoiceNameInput value={name} onChange={setName} />
         </div>
 
-        {/* State */}
-        <div className="mb-6">
-          <p className="text-sm text-white/70 mb-2">Region (State)</p>
-          <div className="max-h-[220px] overflow-y-auto pr-1">
+        {/* Region */}
+        <div className="mb-7">
+          <label className="block text-sm text-white/70 mb-2">
+            Region (State)
+          </label>
+          <div className="max-h-[200px] overflow-y-auto pr-1 rounded-lg">
             <StateSelector value={region} onChange={setRegion} />
           </div>
         </div>
 
+        {/* Error */}
         {error && (
-          <div className="mb-4 rounded-lg bg-red-500/20 p-3 text-center text-sm text-red-300">
+          <div className="mb-5 rounded-xl bg-red-500/15 border border-red-400/30 p-3 text-center text-sm text-red-300">
             {error}
           </div>
         )}
@@ -63,17 +73,19 @@ export default function InputPage() {
         {/* CTA */}
         <button
           onClick={handleStart}
-          disabled={!name || !region}
-          className={`w-full mt-2 rounded-xl py-4 font-bold tracking-wide transition
+          disabled={!canStart}
+          className={`
+            w-full rounded-xl py-4 font-bold tracking-wide transition-all duration-200
             ${
-              name && region
-                ? 'bg-amber-500 text-black hover:bg-amber-400'
+              canStart
+                ? 'bg-amber-500 text-black hover:bg-amber-400 hover:scale-[1.02] animate-pulse-soft'
                 : 'bg-white/10 text-white/40 cursor-not-allowed'
             }
           `}
         >
           Start Game
         </button>
+
       </div>
     </div>
   )

@@ -36,3 +36,87 @@ button {
   background: rgba(255, 255, 255, 0.2);
   border-radius: 6px;
 }
+
+/* Custom scrollbar for state selector */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+/* Glass effect */
+.glass-effect {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Touch target for mobile */
+.touch-target {
+  min-height: 44px;
+}
+
+/* Custom animations */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) skewX(-12deg);
+  }
+  100% {
+    transform: translateX(200%) skewX(-12deg);
+  }
+}
+
+.animate-shine {
+  animation: shine 1.5s ease-in-out;
+}
+
+
+/* ===============================
+   PREMIUM FADE & FLOAT ANIMATIONS
+   =============================== */
+
+@keyframes fadeUpSoft {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes subtlePulse {
+  0% {
+    box-shadow: 0 0 0 rgba(245, 158, 11, 0.0);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(245, 158, 11, 0.35);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(245, 158, 11, 0.0);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUpSoft 0.7s ease-out both;
+}
+
+.animate-pulse-soft {
+  animation: subtlePulse 2.2s ease-in-out infinite;
+}
+

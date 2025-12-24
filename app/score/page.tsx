@@ -40,8 +40,7 @@ export default function LeaderboardPage() {
 
       if (error) throw error
       setPlayers(data || [])
-    } catch (err) {
-      console.error(err)
+    } catch {
       setError('Failed to load leaderboard')
     } finally {
       setLoading(false)
@@ -58,33 +57,25 @@ export default function LeaderboardPage() {
   }
 
   const deleteAllScores = async () => {
-    try {
-      const { error } = await supabase
-        .from('players')
-        .delete()
-        .neq('id', '00000000-0000-0000-0000-000000000000')
-
-      if (error) throw error
-      setConfirmDelete(false)
-      fetchLeaderboard()
-    } catch {
-      alert('Delete failed')
-    }
+    await supabase.from('players').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+    setConfirmDelete(false)
+    fetchLeaderboard()
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#060b1e] via-[#070b14] to-black px-4 py-10 flex justify-center">
+    <div className="h-screen bg-gradient-to-br from-[#060b1e] via-[#070b14] to-black px-4 py-8 flex justify-center">
 
-      {/* Ambient glow */}
+      {/* Glow */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-[-20%] left-1/4 w-[600px] h-[600px] bg-amber-500/20 blur-[160px]" />
         <div className="absolute bottom-[-20%] right-1/4 w-[600px] h-[600px] bg-purple-700/20 blur-[180px]" />
       </div>
 
-      <div className="w-full max-w-3xl">
+      {/* MAIN CONTAINER */}
+      <div className="w-full max-w-3xl flex flex-col h-full">
 
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-6 shrink-0">
           <h1
             onClick={handleSecretTap}
             className="text-3xl md:text-4xl font-extrabold text-white cursor-pointer"
@@ -96,12 +87,10 @@ export default function LeaderboardPage() {
           </p>
         </div>
 
-        {/* Delete Confirm */}
+        {/* Delete confirm */}
         {confirmDelete && (
-          <div className="mb-6 rounded-xl bg-red-500/20 border border-red-500 p-4 text-center">
-            <p className="text-white font-semibold mb-4">
-              Delete all scores?
-            </p>
+          <div className="mb-4 rounded-xl bg-red-500/20 border border-red-500 p-4 text-center shrink-0">
+            <p className="text-white font-semibold mb-3">Delete all scores?</p>
             <div className="flex gap-3">
               <button
                 onClick={deleteAllScores}
@@ -119,33 +108,32 @@ export default function LeaderboardPage() {
           </div>
         )}
 
-        {/* Content */}
-        {loading ? (
-          <div className="text-center text-white/60 py-20 animate-pulse">
-            Loading leaderboard…
-          </div>
-        ) : error ? (
-          <div className="text-center text-red-400 py-20">
-            {error}
-          </div>
-        ) : players.length === 0 ? (
-          <div className="text-center text-white/60 py-20">
-            No scores yet. Be the first!
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {players.map((player, index) => (
+        {/* 🔥 SCROLLABLE LEADERBOARD */}
+        <div className="flex-1 overflow-y-auto pr-1 space-y-3 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
+
+          {loading ? (
+            <div className="text-center text-white/60 py-20 animate-pulse">
+              Loading leaderboard…
+            </div>
+          ) : error ? (
+            <div className="text-center text-red-400 py-20">{error}</div>
+          ) : players.length === 0 ? (
+            <div className="text-center text-white/60 py-20">
+              No scores yet. Be the first!
+            </div>
+          ) : (
+            players.map((player, index) => (
               <LeaderboardRow
                 key={player.id}
                 rank={index + 1}
                 player={player}
               />
-            ))}
-          </div>
-        )}
+            ))
+          )}
+        </div>
 
-        {/* Back */}
-        <div className="mt-8 text-center">
+        {/* Footer */}
+        <div className="mt-6 text-center shrink-0">
           <button
             onClick={() => router.push('/')}
             className="rounded-xl bg-white/10 px-6 py-3 font-bold text-white hover:bg-white/20 transition"
@@ -158,7 +146,7 @@ export default function LeaderboardPage() {
   )
 }
 
-/* ---------- Components ---------- */
+/* ---------- Row ---------- */
 
 function LeaderboardRow({
   rank,
@@ -168,13 +156,11 @@ function LeaderboardRow({
   player: Player
 }) {
   const isTop = rank <= 3
-
-  const medal =
-    rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank
+  const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank
 
   return (
     <div
-      className={`flex items-center justify-between rounded-xl px-4 py-3 border
+      className={`flex items-center justify-between rounded-xl px-4 py-3 border transition
         ${
           isTop
             ? 'bg-gradient-to-r from-amber-500/20 to-amber-700/10 border-amber-400/30'
