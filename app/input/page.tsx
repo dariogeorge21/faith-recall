@@ -8,105 +8,72 @@ import StateSelector from '@/components/StateSelector'
 
 export default function InputPage() {
   const router = useRouter()
-  const { playerName, playerRegion, setPlayerName, setPlayerRegion } = useGameStore()
-  const [name, setName] = useState(playerName)
-  const [region, setRegion] = useState(playerRegion)
+  const { setPlayerName, setPlayerRegion } = useGameStore()
+
+  const [name, setName] = useState('')
+  const [region, setRegion] = useState('')
   const [error, setError] = useState('')
 
   useEffect(() => {
-    // Reset game state when landing on registration
     useGameStore.getState().reset()
   }, [])
 
-  const handleNameChange = (value: string) => {
-    setName(value)
-    setError('')
-  }
-
-  const handleRegionChange = (value: string) => {
-    setRegion(value)
-    setError('')
-  }
-
-  const handleContinue = () => {
-    if (!name.trim()) {
-      setError('Please enter your name')
-      return
-    }
-    if (!region) {
-      setError('Please select your state')
-      return
-    }
+  const handleStart = () => {
+    if (!name.trim()) return setError('Please enter your name')
+    if (!region) return setError('Please select your state')
 
     setPlayerName(name.trim())
     setPlayerRegion(region)
-    
-    // Auto-transition to security code entry
     router.push('/security-code')
   }
 
-  // Auto-continue when both fields are filled (as per requirements)
-  useEffect(() => {
-    if (name.trim() && region && !error) {
-      const timer = setTimeout(() => {
-        if (name.trim() && region) {
-          setPlayerName(name.trim())
-          setPlayerRegion(region)
-          router.push('/security-code')
-        }
-      }, 1000) // 1 second delay to show validation
-      return () => clearTimeout(timer)
-    }
-  }, [name, region, error, setPlayerName, setPlayerRegion, router])
-
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8">
-      <div className="w-full" style={{ maxWidth: '1400px' }}>
-        <div className="text-center mb-10">
-          <h1 className="text-6xl font-bold text-burgundy-700 mb-4">
-            Faith Recall
-          </h1>
-          <p className="text-4xl text-gold-600 font-semibold">
-            JAAGO
-          </p>
-          <p className="text-3xl text-burgundy-600 mt-4">
-            Church Event Game
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#060b1e] via-[#070b14] to-black px-4">
+
+      <div className="w-full max-w-md rounded-[30px] bg-white/[0.06] backdrop-blur-2xl border border-white/10 shadow-[0_40px_120px_rgba(0,0,0,0.9)] px-6 py-8">
+
+        {/* Header */}
+        <div className="text-center mb-7">
+          <h1 className="text-3xl font-extrabold text-white">Profile Setup</h1>
+          <p className="mt-1 text-xs tracking-widest uppercase text-amber-400">
+            ✨ Prepare for the challenge ✨
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-2xl p-10 mb-6">
-          <div className="mb-8">
-            <label className="block text-3xl font-bold text-burgundy-700 mb-6">
-              Enter Your Name
-            </label>
-            <VoiceNameInput
-              value={name}
-              onChange={handleNameChange}
-            />
-          </div>
-
-          <div className="mb-8">
-            <label className="block text-3xl font-bold text-burgundy-700 mb-6">
-              Select Your State
-            </label>
-            <StateSelector
-              value={region}
-              onChange={handleRegionChange}
-            />
-          </div>
-
-          {error && (
-            <div className="mb-6 p-6 bg-red-100 border-2 border-red-400 rounded-lg text-red-700 text-2xl font-semibold text-center">
-              {error}
-            </div>
-          )}
-
-          {name.trim() && region && !error && (
-            <div className="text-center text-2xl text-green-600 font-semibold animate-pulse">
-              ✓ Ready to continue...
-            </div>
-          )}
+        {/* Name */}
+        <div className="mb-6">
+          <p className="text-sm text-white/70 mb-2">Player Name</p>
+          <VoiceNameInput value={name} onChange={setName} />
         </div>
+
+        {/* State */}
+        <div className="mb-6">
+          <p className="text-sm text-white/70 mb-2">Region (State)</p>
+          <div className="max-h-[220px] overflow-y-auto pr-1">
+            <StateSelector value={region} onChange={setRegion} />
+          </div>
+        </div>
+
+        {error && (
+          <div className="mb-4 rounded-lg bg-red-500/20 p-3 text-center text-sm text-red-300">
+            {error}
+          </div>
+        )}
+
+        {/* CTA */}
+        <button
+          onClick={handleStart}
+          disabled={!name || !region}
+          className={`w-full mt-2 rounded-xl py-4 font-bold tracking-wide transition
+            ${
+              name && region
+                ? 'bg-amber-500 text-black hover:bg-amber-400'
+                : 'bg-white/10 text-white/40 cursor-not-allowed'
+            }
+          `}
+        >
+          Start Game
+        </button>
       </div>
     </div>
   )

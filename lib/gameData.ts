@@ -13,17 +13,18 @@ export interface QuizQuestion {
 }
 
 export const SAINTS_DATA: Saint[] = [
-  { id: 1, name: 'Saint Peter', image: '/images/saints/peter.png' },
-  { id: 2, name: 'Saint Sebastian', image: '/images/saints/sebastian.png' },
-  { id: 3, name: 'Saint Francis of Assisi', image: '/images/saints/francis.png' },
-  { id: 4, name: 'Saint Thérèse of Lisieux', image: '/images/saints/therese.png' },
-  { id: 5, name: 'Saint Matthew', image: '/images/saints/matthew.png' },
-  { id: 6, name: 'Saint Mark', image: '/images/saints/mark.png' },
-  { id: 7, name: 'Saint Luke', image: '/images/saints/luke.png' },
-  { id: 8, name: 'Saint John the Evangelist', image: '/images/saints/john.png' },
-  { id: 9, name: 'Saint Paul', image: '/images/saints/paul.png' },
-  { id: 10, name: 'Saint Joseph', image: '/images/saints/joseph.png' },
+  { id: 1, name: 'Saint Peter', image: '/images/saints/st.peter.png' },
+  { id: 2, name: 'Saint Sebastian', image: '/images/saints/st.sebastian.png' },
+  { id: 3, name: 'Saint Francis of Assisi', image: '/images/saints/st.francis.png' },
+  { id: 4, name: 'Saint Thérèse of Lisieux', image: '/images/saints/st.therese.png' },
+  { id: 5, name: 'Saint Matthew', image: '/images/saints/st.matthew.png' },
+  { id: 6, name: 'Saint Mark', image: '/images/saints/st.mark.png' },
+  { id: 7, name: 'Saint Luke', image: '/images/saints/st.luke.png' },
+  { id: 8, name: 'Saint John the Evangelist', image: '/images/saints/st.john.png' },
+  { id: 9, name: 'Saint Paul', image: '/images/saints/st.paul.png' },
+  { id: 10, name: 'Saint Joseph', image: '/images/saints/st.joseph.png' },
 ]
+
 
 export const BIBLE_QUIZ_DATA: QuizQuestion[] = [
   {

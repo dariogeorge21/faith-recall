@@ -3,25 +3,36 @@
 @tailwind utilities;
 
 * {
+  box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
 }
 
+/* LOCK PAGE SCROLL */
+html,
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background-color: #05070f;
+  overflow: hidden;
 }
 
-/* Prevent text selection on interactive elements */
+#__next {
+  height: 100%;
+}
+
+/* Buttons */
 button {
   user-select: none;
   -webkit-user-select: none;
-}
-
-/* Touch optimization */
-.touch-manipulation {
   touch-action: manipulation;
 }
 
+/* Scrollbar (inside game only) */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+}

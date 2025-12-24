@@ -16,14 +16,13 @@ export default function ResultsPage() {
     calculateTotalScore,
     reset,
   } = useGameStore()
-  const [saveError, setSaveError] = useState<string | null>(null)
+
   const [saving, setSaving] = useState(true)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   useEffect(() => {
-    // Calculate total score
     const total = calculateTotalScore()
 
-    // Save to Supabase
     const saveScore = async () => {
       try {
         const { error } = await supabase.from('players').insert({
@@ -32,13 +31,10 @@ export default function ResultsPage() {
           score: total,
         })
 
-        if (error) {
-          console.error('Error saving score:', error)
-          setSaveError('Failed to save score to leaderboard')
-        }
+        if (error) throw error
       } catch (err) {
-        console.error('Error saving score:', err)
-        setSaveError('Failed to save score to leaderboard')
+        console.error(err)
+        setSaveError('Could not save score. Please try again later.')
       } finally {
         setSaving(false)
       }
@@ -47,101 +43,90 @@ export default function ResultsPage() {
     saveScore()
   }, [playerName, playerRegion, calculateTotalScore])
 
-  const handlePlayAgain = () => {
+  const handleHome = () => {
     reset()
     router.push('/')
   }
 
-  const handleViewLeaderboard = () => {
-    router.push('/leaderboard')
+  const handleLeaderboard = () => {
+    router.push('/score')
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-8">
-      <div className="w-full max-w-3xl">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#060b1e] via-[#070b14] to-black px-4">
+
+      {/* Ambient glow */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute top-[-30%] left-1/4 w-[600px] h-[600px] bg-amber-500/20 blur-[160px]" />
+        <div className="absolute bottom-[-30%] right-1/4 w-[600px] h-[600px] bg-purple-700/20 blur-[180px]" />
+      </div>
+
+      <div className="w-full max-w-xl rounded-[32px] bg-white/[0.06] backdrop-blur-2xl border border-white/10 shadow-[0_40px_120px_rgba(0,0,0,0.9)] px-6 py-8">
+
+        {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-6xl font-bold text-burgundy-700 mb-4">
-            Game Complete!
+          <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-1">
+            Game Complete
           </h1>
-          <p className="text-2xl md:text-3xl text-gold-600 font-semibold">
-            Your Results
+          <p className="text-sm tracking-widest uppercase text-amber-400">
+            Faith Recall — Results
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 mb-6">
-          <div className="space-y-6">
-            <div className="text-center">
-              <p className="text-2xl md:text-3xl font-bold text-burgundy-700 mb-2">
-                {playerName}
-              </p>
-              <p className="text-xl md:text-2xl text-burgundy-600">
-                {playerRegion}
-              </p>
-            </div>
+        {/* Player Info */}
+        <div className="text-center mb-6">
+          <p className="text-xl font-bold text-white">{playerName}</p>
+          <p className="text-sm text-white/60">{playerRegion}</p>
+        </div>
 
-            <div className="border-t-2 border-burgundy-200 pt-6">
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xl md:text-2xl font-semibold text-burgundy-700">
-                  Game 1 Score:
-                </span>
-                <span className="text-2xl md:text-3xl font-bold text-burgundy-700">
-                  {Math.max(0, game1Score).toLocaleString()}
-                </span>
-              </div>
+        {/* Scores */}
+        <div className="space-y-4 mb-6">
+          <ScoreRow label="Saints Memory Match" value={game1Score} />
+          <ScoreRow label="Emoji Bible Quiz" value={game2Score} />
 
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xl md:text-2xl font-semibold text-burgundy-700">
-                  Game 2 Score:
-                </span>
-                <span className="text-2xl md:text-3xl font-bold text-burgundy-700">
-                  {game2Score.toLocaleString()}
-                </span>
-              </div>
-
-              <div className="border-t-4 border-gold-500 pt-4 mt-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-3xl md:text-4xl font-bold text-burgundy-700">
-                    Total Score:
-                  </span>
-                  <span className="text-4xl md:text-5xl font-bold text-gold-600">
-                    {Math.max(0, totalScore).toLocaleString()}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {saving && (
-              <div className="text-center text-lg text-burgundy-600">
-                Saving to leaderboard...
-              </div>
-            )}
-
-            {saveError && (
-              <div className="p-4 bg-yellow-100 border-2 border-yellow-400 rounded-lg text-yellow-700 text-lg font-semibold text-center">
-                {saveError}
-              </div>
-            )}
-
-            {!saving && !saveError && (
-              <div className="text-center text-lg text-green-600 font-semibold">
-                ✓ Score saved to leaderboard!
-              </div>
-            )}
+          <div className="border-t border-white/10 pt-4 flex justify-between items-center">
+            <span className="text-lg font-bold text-white">Total Score</span>
+            <span className="text-3xl font-extrabold text-amber-400">
+              {Math.max(0, totalScore).toLocaleString()}
+            </span>
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-4">
+        {/* Save Status */}
+        <div className="text-center mb-6">
+          {saving && (
+            <p className="text-sm text-white/60 animate-pulse">
+              Saving score to leaderboard…
+            </p>
+          )}
+
+          {!saving && !saveError && (
+            <p className="text-sm text-green-400 font-semibold">
+              ✓ Score saved successfully
+            </p>
+          )}
+
+          {saveError && (
+            <p className="text-sm text-red-400 font-semibold">
+              {saveError}
+            </p>
+          )}
+        </div>
+
+        {/* Actions */}
+        <div className="flex gap-4">
           <button
-            onClick={handlePlayAgain}
-            className="flex-1 py-4 text-xl md:text-2xl font-bold bg-burgundy-600 text-white rounded-lg hover:bg-burgundy-700 transition-all touch-manipulation"
+            onClick={handleHome}
+            className="flex-1 rounded-xl py-3 font-bold bg-white/10 text-white hover:bg-white/20 transition"
           >
             Home
           </button>
+
           <button
-            onClick={handleViewLeaderboard}
-            className="flex-1 py-4 text-xl md:text-2xl font-bold bg-gold-500 text-white rounded-lg hover:bg-gold-600 transition-all touch-manipulation"
+            onClick={handleLeaderboard}
+            className="flex-1 rounded-xl py-3 font-bold bg-amber-500 text-black hover:bg-amber-400 transition"
           >
-            View Leaderboard
+            Leaderboard
           </button>
         </div>
       </div>
@@ -149,3 +134,13 @@ export default function ResultsPage() {
   )
 }
 
+function ScoreRow({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="flex justify-between items-center">
+      <span className="text-sm text-white/70">{label}</span>
+      <span className="text-lg font-bold text-white">
+        {Math.max(0, value).toLocaleString()}
+      </span>
+    </div>
+  )
+}
