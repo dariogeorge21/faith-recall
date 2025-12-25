@@ -1,8 +1,11 @@
 import { create } from 'zustand'
+import { supabase } from '@/lib/supabase' // Adjust path if necessary
 
 interface GameState {
-  // Session (IMPORTANT for leaderboard)
+  // Session & Submission status
   sessionId: string
+  isSubmitting: boolean
+  hasSaved: boolean
 
   // Player info
   playerName: string
@@ -31,12 +34,15 @@ interface GameState {
   resetGame1Combo: () => void
   addGame2Score: (points: number) => void
   calculateTotalScore: () => number
+  saveResults: () => Promise<{ success: boolean; error?: any }>
   reset: () => void
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
   // Initial state
-  sessionId: crypto.randomUUID(),
+  sessionId: typeof crypto !== 'undefined' ? crypto.randomUUID() : Math.random().toString(36),
+  isSubmitting: false,
+  hasSaved: false,
 
   playerName: '',
   playerRegion: '',
@@ -87,9 +93,52 @@ export const useGameStore = create<GameState>((set, get) => ({
     return total
   },
 
+  // NEW: Save Results logic with double-entry protection
+  saveResults: async () => {
+    const state = get()
+
+    // 1. Guard: If already submitting or already saved, STOP.
+    if (state.isSubmitting || state.hasSaved) {
+      return { success: false, error: 'Already submitted' }
+    }
+
+    // 2. Guard: Don't save empty/invalid players
+    if (!state.playerName || state.playerName.trim() === '') {
+      return { success: false, error: 'No player name' }
+    }
+
+    set({ isSubmitting: true })
+
+    try {
+      const finalScore = state.game1Score + state.game2Score
+      
+      const { error } = await supabase
+        .from('players')
+        .insert([
+          {
+            name: state.playerName,
+            region: state.playerRegion,
+            score: finalScore,
+          },
+        ])
+
+      if (error) throw error
+
+      // 3. Mark as successfully saved
+      set({ hasSaved: true, isSubmitting: false })
+      return { success: true }
+    } catch (error) {
+      console.error('Leaderboard Save Error:', error)
+      set({ isSubmitting: false })
+      return { success: false, error }
+    }
+  },
+
   reset: () =>
     set({
-      sessionId: crypto.randomUUID(), // NEW SESSION for next player
+      sessionId: typeof crypto !== 'undefined' ? crypto.randomUUID() : Math.random().toString(36),
+      isSubmitting: false,
+      hasSaved: false,
 
       playerName: '',
       playerRegion: '',

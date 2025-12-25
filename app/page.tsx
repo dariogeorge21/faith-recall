@@ -2,92 +2,168 @@
 
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import { Trophy, Sparkles, ChevronRight } from 'lucide-react'
 
 export default function LandingPage() {
   const router = useRouter()
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-[#05070f] px-6 overflow-hidden">
-
-      {/* Ambient color layers (static but deep) */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0a0f24] via-[#05070f] to-black" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
-                        w-[700px] h-[700px] bg-amber-500/15 blur-[200px]" />
-        <div className="absolute top-1/3 right-1/4 
-                        w-[400px] h-[400px] bg-[#800020]/20 blur-[180px]" />
+    <div className="relative min-h-screen flex flex-col items-center justify-center bg-[#02040a] px-6 overflow-hidden">
+      
+      {/* 1. DYNAMIC AMBIENCE & PARTICLES */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[70vw] h-[70vh] bg-blue-600/10 blur-[120px] rounded-full animate-ethereal-1" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vh] bg-amber-500/10 blur-[150px] rounded-full animate-ethereal-2" />
+        
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40">
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute bg-white rounded-full animate-float-particle"
+              style={{
+                width: Math.random() * 3 + 'px',
+                height: Math.random() * 3 + 'px',
+                left: Math.random() * 100 + '%',
+                top: Math.random() * 100 + '%',
+                animationDelay: Math.random() * 5 + 's',
+                animationDuration: Math.random() * 10 + 10 + 's',
+              }}
+            />
+          ))}
+        </div>
       </div>
 
-      {/* Main Card */}
-      <main className="w-full max-w-3xl rounded-[28px] 
-                       bg-[#0b1120]/95 backdrop-blur-xl 
-                       border border-white/10 
-                       shadow-[0_40px_120px_rgba(0,0,0,0.85)]
-                       px-8 md:px-12 py-14 text-center">
-
-        {/* Logo */}
-        <div className="flex justify-center mb-10">
-          <div className="relative">
-            <div className="absolute inset-0 bg-amber-500/25 blur-3xl rounded-full" />
+      {/* 2. MAIN INTERFACE */}
+      <main className="relative z-10 w-full max-w-2xl flex flex-col items-center">
+        
+        {/* HERO LOGO - STABLE WITH SCALE BURST */}
+        <div className="relative mb-14 animate-reveal-down flex items-center justify-center">
+          {/* Breathing aura sits directly behind the image */}
+          <div className="absolute w-[180px] h-[180px] bg-amber-400/20 blur-[60px] rounded-full animate-pulse-gentle" />
+          
+          {/* Logo is kept straight; only performs a sudden scale pulse */}
+          <div className="relative animate-sudden-scale">
             <Image
               src="/jaago.png"
               alt="JAAGO Logo"
-              width={180}
-              height={180}
+              width={160}
+              height={160}
               priority
-              className="relative drop-shadow-[0_0_30px_rgba(212,175,55,0.35)]"
+              className="drop-shadow-[0_0_35px_rgba(251,191,36,0.4)]"
             />
           </div>
         </div>
 
-        {/* Title */}
-        <div className="mb-12 space-y-4">
-          <h1 className="text-4xl md:text-6xl font-semibold text-white tracking-tight">
-            Faith Recall
+        {/* CINEMATIC TYPOGRAPHY */}
+        <div className="text-center space-y-6 mb-16 px-4">
+          <div className="flex items-center justify-center gap-4 animate-reveal" style={{ animationDelay: '0.2s' }}>
+            <span className="h-[1px] w-12 bg-gradient-to-r from-transparent to-amber-500/50" />
+            <span className="text-amber-400 font-bold text-[11px] uppercase tracking-[0.8em] drop-shadow-glow">
+              JAAGO 2025
+            </span>
+            <span className="h-[1px] w-12 bg-gradient-to-l from-transparent to-amber-500/50" />
+          </div>
+
+          <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter leading-none animate-reveal" style={{ animationDelay: '0.4s' }}>
+            Faith <span className="text-transparent bg-clip-text bg-gradient-to-b from-amber-200 to-amber-600 animate-shimmer">Recall</span>
           </h1>
 
-          <p className="text-sm md:text-base tracking-[0.4em] uppercase text-amber-400">
-            JAAGO 2025
-          </p>
-
-          <p className="text-sm md:text-base text-white/65 max-w-xl mx-auto leading-relaxed">
-            A premium church event experience that blends memory,
-            focus, and faith into one meaningful journey.
+          <p className="text-white/40 text-sm md:text-lg max-w-md mx-auto font-light tracking-wide leading-relaxed animate-reveal" style={{ animationDelay: '0.6s' }}>
+            A premium experience that blends <span className="text-white/80 font-medium italic">memory</span>, 
+            <span className="text-white/80 font-medium italic"> focus</span>, and 
+            <span className="text-white/80 font-medium italic"> faith</span>.
           </p>
         </div>
 
-        {/* Actions */}
-        <div className="flex flex-col md:flex-row gap-5 max-w-xl mx-auto">
-
+        {/* ACTION PANEL */}
+        <div className="w-full max-w-sm flex flex-col gap-5 px-6 animate-reveal" style={{ animationDelay: '0.8s' }}>
+          
           <button
             onClick={() => router.push('/input')}
-            className="flex-1 rounded-xl bg-amber-500 py-4 text-lg font-semibold text-black
-                       shadow-lg shadow-amber-500/20
-                       hover:bg-amber-400 hover:shadow-amber-400/30
-                       active:scale-[0.97] transition-all"
+            className="group relative w-full bg-amber-500 py-5 rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(245,158,11,0.2)] transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_60px_rgba(245,158,11,0.4)] active:scale-95"
           >
-            Start Game
+            <div className="absolute inset-0 w-1/2 h-full bg-white/20 skew-x-[-25deg] -translate-x-[150%] group-hover:translate-x-[250%] transition-transform duration-1000 ease-in-out" />
+            <span className="relative flex items-center justify-center gap-3 text-black font-black uppercase tracking-[0.25em] text-xs">
+              Begin Journey <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </span>
           </button>
 
           <button
             onClick={() => router.push('/score')}
-            className="flex-1 rounded-xl bg-white/10 border border-white/15 py-4 text-lg font-semibold text-white
-                       hover:bg-white/20
-                       active:scale-[0.97] transition-all"
+            className="group relative w-full bg-white/[0.03] border border-white/5 py-5 rounded-2xl transition-all duration-300 hover:bg-white/[0.08] hover:border-white/20"
           >
-            Leaderboard
+            <span className="flex items-center justify-center gap-3 text-white/50 font-bold uppercase tracking-[0.2em] text-[10px] group-hover:text-white transition-colors">
+              <Trophy className="w-4 h-4 text-amber-500/30 group-hover:text-amber-500/60" />
+              Hall of Faith
+            </span>
           </button>
         </div>
 
-        {/* Footer Accent */}
-        <div className="mt-12 flex flex-col items-center gap-3 opacity-70">
-          <div className="w-12 h-[1px] bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
-          <p className="text-[11px] tracking-[0.45em] uppercase text-white/50">
-            Church Event Experience
-          </p>
+        {/* STATUS BAR */}
+        <div className="mt-20 flex items-center gap-4 text-white/20 animate-fade-in-slow">
+          <Sparkles className="w-3 h-3 animate-pulse" />
+          <span className="text-[9px] uppercase tracking-[0.5em] font-medium italic">
+            Parish Accredited Experience
+          </span>
+          <Sparkles className="w-3 h-3 animate-pulse" />
         </div>
 
       </main>
+
+      {/* 3. SENIOR ENGINEER ANIMATION ENGINE */}
+      <style jsx global>{`
+        /* SCALE BURST: Logo stays straight, but "beats" like a heart every few seconds */
+        @keyframes sudden-scale {
+          0%, 85% { transform: scale(1); filter: brightness(1); }
+          90% { transform: scale(1.1); filter: brightness(1.3); }
+          100% { transform: scale(1); filter: brightness(1); }
+        }
+        
+        .animate-sudden-scale {
+          animation: sudden-scale 5s cubic-bezier(0.19, 1, 0.22, 1) infinite;
+        }
+
+        @keyframes ethereal-1 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(5%, 5%) scale(1.1); }
+        }
+        @keyframes ethereal-2 {
+          0%, 100% { transform: translate(0, 0) scale(1.1); }
+          50% { transform: translate(-5%, -5%) scale(1); }
+        }
+        @keyframes float-particle {
+          0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+          20% { opacity: 1; }
+          80% { opacity: 1; }
+          100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+        @keyframes shimmer {
+          0% { background-position: -200% center; }
+          100% { background-position: 200% center; }
+        }
+        @keyframes reveal {
+          from { opacity: 0; transform: translateY(30px); filter: blur(10px); }
+          to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+        @keyframes reveal-down {
+          from { opacity: 0; transform: translateY(-30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-ethereal-1 { animation: ethereal-1 15s ease-in-out infinite; }
+        .animate-ethereal-2 { animation: ethereal-2 18s ease-in-out infinite; }
+        .animate-float-particle { animation: float-particle linear infinite; }
+        .animate-pulse-gentle { animation: pulse 4s ease-in-out infinite; }
+        .animate-reveal { animation: reveal 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards; opacity: 0; }
+        .animate-reveal-down { animation: reveal-down 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+        .animate-fade-in-slow { animation: opacity 3s ease-in; }
+        .animate-shimmer {
+          background-size: 200% auto;
+          animation: shimmer 4s linear infinite;
+        }
+        .drop-shadow-glow {
+          filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.4));
+        }
+      `}</style>
     </div>
   )
 }
