@@ -1,30 +1,20 @@
 import { create } from 'zustand'
-import { supabase } from '@/lib/supabase' // Adjust path if necessary
+import { supabase } from '@/lib/supabase' 
 
 interface GameState {
-  // Session & Submission status
   sessionId: string
   isSubmitting: boolean
   hasSaved: boolean
-
-  // Player info
   playerName: string
   playerRegion: string
   securityCode: string
-
-  // Game 1 state
   game1Score: number
   game1Matches: number
   game1Combo: number
-
-  // Game 2 state
   game2Score: number
   game2Answers: number
-
-  // Total score
   totalScore: number
 
-  // Actions
   setPlayerName: (name: string) => void
   setPlayerRegion: (region: string) => void
   setSecurityCode: (code: string) => void
@@ -33,45 +23,47 @@ interface GameState {
   incrementGame1Combo: () => void
   resetGame1Combo: () => void
   addGame2Score: (points: number) => void
-  calculateTotalScore: () => number
   saveResults: () => Promise<{ success: boolean; error?: any }>
   reset: () => void
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
-  // Initial state
   sessionId: typeof crypto !== 'undefined' ? crypto.randomUUID() : Math.random().toString(36),
   isSubmitting: false,
   hasSaved: false,
-
   playerName: '',
   playerRegion: '',
   securityCode: '',
-
   game1Score: 0,
   game1Matches: 0,
   game1Combo: 0,
-
   game2Score: 0,
   game2Answers: 0,
-
   totalScore: 0,
 
-  // Actions
   setPlayerName: (name) => set({ playerName: name }),
   setPlayerRegion: (region) => set({ playerRegion: region }),
   setSecurityCode: (code) => set({ securityCode: code }),
 
+  // FIX: Automatically update totalScore whenever game1Score changes
   addGame1Score: (points) =>
-    set((state) => ({
-      game1Score: Math.max(0, state.game1Score + points),
-      game1Matches: state.game1Matches + 1,
-    })),
+    set((state) => {
+      const newGame1Score = Math.max(0, state.game1Score + points);
+      return {
+        game1Score: newGame1Score,
+        game1Matches: state.game1Matches + 1,
+        totalScore: newGame1Score + state.game2Score
+      };
+    }),
 
   addGame1Penalty: (points) =>
-    set((state) => ({
-      game1Score: Math.max(0, state.game1Score - points),
-    })),
+    set((state) => {
+      const newGame1Score = Math.max(0, state.game1Score - points);
+      return {
+        game1Score: newGame1Score,
+        totalScore: newGame1Score + state.game2Score
+      };
+    }),
 
   incrementGame1Combo: () =>
     set((state) => ({
@@ -80,36 +72,26 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   resetGame1Combo: () => set({ game1Combo: 0 }),
 
+  // FIX: Automatically update totalScore whenever game2Score changes
   addGame2Score: (points) =>
-    set((state) => ({
-      game2Score: state.game2Score + points,
-      game2Answers: state.game2Answers + 1,
-    })),
+    set((state) => {
+      const newGame2Score = state.game2Score + points;
+      return {
+        game2Score: newGame2Score,
+        game2Answers: state.game2Answers + 1,
+        totalScore: state.game1Score + newGame2Score
+      };
+    }),
 
-  calculateTotalScore: () => {
-    const state = get()
-    const total = Math.max(0, state.game1Score + state.game2Score)
-    set({ totalScore: total })
-    return total
-  },
-
-  // NEW: Save Results logic with double-entry protection
   saveResults: async () => {
     const state = get()
-
-    // 1. Guard: If already submitting or already saved, STOP.
-    if (state.isSubmitting || state.hasSaved) {
-      return { success: false, error: 'Already submitted' }
-    }
-
-    // 2. Guard: Don't save empty/invalid players
-    if (!state.playerName || state.playerName.trim() === '') {
-      return { success: false, error: 'No player name' }
-    }
+    if (state.isSubmitting || state.hasSaved) return { success: false, error: 'Already submitted' }
+    if (!state.playerName || state.playerName.trim() === '') return { success: false, error: 'No player name' }
 
     set({ isSubmitting: true })
 
     try {
+      // Use the live total for saving
       const finalScore = state.game1Score + state.game2Score
       
       const { error } = await supabase
@@ -123,8 +105,6 @@ export const useGameStore = create<GameState>((set, get) => ({
         ])
 
       if (error) throw error
-
-      // 3. Mark as successfully saved
       set({ hasSaved: true, isSubmitting: false })
       return { success: true }
     } catch (error) {
@@ -139,18 +119,14 @@ export const useGameStore = create<GameState>((set, get) => ({
       sessionId: typeof crypto !== 'undefined' ? crypto.randomUUID() : Math.random().toString(36),
       isSubmitting: false,
       hasSaved: false,
-
       playerName: '',
       playerRegion: '',
       securityCode: '',
-
       game1Score: 0,
       game1Matches: 0,
       game1Combo: 0,
-
       game2Score: 0,
       game2Answers: 0,
-
       totalScore: 0,
     }),
 }))

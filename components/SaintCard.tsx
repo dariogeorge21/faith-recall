@@ -3,11 +3,7 @@
 import Image from 'next/image'
 
 interface SaintCardProps {
-  saint: {
-    id: number
-    name: string
-    image: string
-  }
+  saint: { id: number; name: string; image: string }
   side: 'left' | 'right'
   isRevealed: boolean
   isSelected: boolean
@@ -32,43 +28,50 @@ export default function SaintCard({
       onClick={onClick}
       disabled={disabled || isRemoved}
       className={`
-        relative w-full h-[120px] rounded-xl
+        relative mx-auto rounded-2xl
         flex items-center justify-center
-        transition-all duration-300
-        bg-[#0b1224]
+        transition-all duration-500 ease-out
+        bg-[#0b1224]/80 backdrop-blur-md overflow-hidden
+        w-full max-w-[140px] aspect-[2/2]
         ${
           isMatched
-            ? 'border border-red-500 shadow-[0_0_22px_rgba(239,68,68,0.6)]'
+            ? 'border-2 border-amber-500 shadow-[0_0_25px_rgba(245,158,11,0.4)]'
             : isSelected
-            ? 'border border-red-400'
-            : 'border border-white/10 hover:border-white/30'
+            ? 'border-2 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.2)]'
+            : 'border border-white/10 hover:border-amber-500/40'
         }
-        ${isRemoved ? 'opacity-50' : ''}
       `}
     >
-      {/* HIDDEN */}
+      {/* HIDDEN STATE */}
       {!isRevealed && (
-        <span className="text-white/30 text-xl">?</span>
+        <div className="flex flex-col items-center justify-center w-full h-full bg-[#05070f]">
+           <span className="text-amber-500/10 text-5xl font-black italic select-none">?</span>
+        </div>
       )}
 
-      {/* LEFT → IMAGE */}
+      {/* IMAGE SIDE (Focus on Face) */}
       {isRevealed && side === 'left' && (
-        <div className="relative h-[100px] w-full">
+        <div className="relative w-full h-full animate-in flip-in-y duration-500">
           <Image
             src={saint.image}
             alt={saint.name}
             fill
-            className="object-contain"
-            sizes="120px"
+            className="object-cover object-top"
+            sizes="130px"
+            priority
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         </div>
       )}
 
-      {/* RIGHT → NAME */}
+      {/* NAME SIDE */}
       {isRevealed && side === 'right' && (
-        <span className="text-white text-sm font-semibold text-center px-3">
-          {saint.name}
-        </span>
+        <div className="w-full h-full flex flex-col items-center justify-center px-3 bg-slate-900/80 animate-in flip-in-y duration-500">
+          <span className="text-white text-[11px] uppercase tracking-[0.2em] font-black text-center leading-tight">
+            {saint.name}
+          </span>
+          <div className="mt-2 h-[1px] w-4 bg-amber-500/50" />
+        </div>
       )}
     </button>
   )

@@ -16,7 +16,6 @@ type Card = {
   isRevealed: boolean
   isSelected: boolean
   isMatched: boolean
-  isRemoved: boolean
 }
 
 export default function Game1Page() {
@@ -40,7 +39,6 @@ export default function Game1Page() {
       isRevealed: false,
       isSelected: false,
       isMatched: false,
-      isRemoved: false,
     })))
 
     setRightCards([...shuffled].sort(() => Math.random() - 0.5).map((s) => ({
@@ -48,14 +46,13 @@ export default function Game1Page() {
       isRevealed: false,
       isSelected: false,
       isMatched: false,
-      isRemoved: false,
     })))
   }, [])
 
   /* ---------- AUTO-TRANSITION ON COMPLETION ---------- */
   useEffect(() => {
-    const allMatched = leftCards.length > 0 && leftCards.every(c => c.isMatched)
-    if (allMatched) {
+    // If all cards are filtered out, the game is complete
+    if (leftCards.length === 0 && SAINTS_DATA.length > 0) {
       const timer = setTimeout(() => router.push('/game2'), 1200)
       return () => clearTimeout(timer)
     }
@@ -76,21 +73,16 @@ export default function Game1Page() {
     return () => clearInterval(timer)
   }, [router])
 
-  /* ---------- CLICK HANDLERS (UPDATED FOR SINGLE-SIDE LOCK) ---------- */
+  /* ---------- CLICK HANDLERS ---------- */
   const clickLeft = (index: number) => {
-    if (lock || leftCards[index].isMatched) return
-
-    // If clicking the same card that is already open, just close it
+    if (lock) return
     if (selectedLeft === index) {
       setLeftCards(prev => prev.map((c, i) => i === index ? { ...c, isRevealed: false, isSelected: false } : c))
       setSelectedLeft(null)
       return
     }
-
     setLeftCards(prev => prev.map((c, i) => {
-      // Close the previously selected card on this side
       if (i === selectedLeft) return { ...c, isRevealed: false, isSelected: false }
-      // Open the newly clicked card
       if (i === index) return { ...c, isRevealed: true, isSelected: true }
       return c
     }))
@@ -98,26 +90,21 @@ export default function Game1Page() {
   }
 
   const clickRight = (index: number) => {
-    if (lock || rightCards[index].isMatched) return
-
-    // If clicking the same card that is already open, just close it
+    if (lock) return
     if (selectedRight === index) {
       setRightCards(prev => prev.map((c, i) => i === index ? { ...c, isRevealed: false, isSelected: false } : c))
       setSelectedRight(null)
       return
     }
-
     setRightCards(prev => prev.map((c, i) => {
-      // Close the previously selected card on this side
       if (i === selectedRight) return { ...c, isRevealed: false, isSelected: false }
-      // Open the newly clicked card
       if (i === index) return { ...c, isRevealed: true, isSelected: true }
       return c
     }))
     setSelectedRight(index)
   }
 
-  /* ---------- MATCH LOGIC ---------- */
+  /* ---------- MATCH LOGIC: Physically removes cards to slide up below items ---------- */
   useEffect(() => {
     if (selectedLeft === null || selectedRight === null) return
 
@@ -129,8 +116,9 @@ export default function Game1Page() {
       setMatchStatus('correct')
       addGame1Score(500)
       setTimeout(() => {
-        setLeftCards(prev => prev.map((c, i) => i === selectedLeft ? { ...c, isMatched: true, isRemoved: true } : c))
-        setRightCards(prev => prev.map((c, i) => i === selectedRight ? { ...c, isMatched: true, isRemoved: true } : c))
+        // FILTER: Removes the pair so the container shrinks and cards slide up
+        setLeftCards(prev => prev.filter((_, i) => i !== selectedLeft))
+        setRightCards(prev => prev.filter((_, i) => i !== selectedRight))
         resetSelection()
       }, 600) 
     } else {
@@ -141,7 +129,7 @@ export default function Game1Page() {
         resetSelection()
       }, 800)
     }
-  }, [selectedLeft, selectedRight])
+  }, [selectedLeft, selectedRight, leftCards, rightCards, addGame1Score])
 
   const resetSelection = () => {
     setSelectedLeft(null)
@@ -153,39 +141,35 @@ export default function Game1Page() {
   return (
     <div className="h-screen w-full flex flex-col bg-gradient-to-br from-[#05070f] via-[#0b1020] to-black overflow-hidden font-sans">
       
-      {/* Dynamic Header */}
-      <div className="pt-8 text-center shrink-0 z-10">
-        <h1 className={`text-4xl font-extrabold transition-all duration-300 tracking-tight ${
+      {/* HEADER SECTION */}
+      <div className="pt-8 pb-4 text-center shrink-0 z-10">
+        <h1 className={`text-3xl font-black transition-all duration-500 tracking-tighter uppercase ${
           matchStatus === 'correct' ? 'text-green-400 scale-105' : 
-          matchStatus === 'wrong' ? 'text-red-500' : 
-          'text-amber-400'
+          matchStatus === 'wrong' ? 'text-red-500' : 'text-amber-400'
         }`}>
-          {matchStatus === 'correct' ? 'GREAT MATCH!' : matchStatus === 'wrong' ? 'NOT A PAIR' : 'Saints Memory Match'}
+          {matchStatus === 'correct' ? 'Great Match!' : matchStatus === 'wrong' ? 'Not a Pair' : 'Hall of Saints'}
         </h1>
-        <div className="mt-4">
+        <div className="mt-3">
           <Timer seconds={timeRemaining} size="medium" />
         </div>
       </div>
 
-      {/* Unified Scrolling Container */}
-      <div className="flex-1 px-6 pb-6 overflow-hidden flex items-center justify-center">
-        <div className="max-w-4xl w-full max-h-[75vh] bg-white/[0.03] rounded-3xl border border-white/10 p-8 overflow-y-auto custom-scrollbar">
+      {/* AUTO-SHRINKING CONTAINER */}
+      <div className="flex-1 w-full flex items-start justify-center px-4 overflow-y-auto custom-scrollbar pb-10">
+        <div className="w-full max-w-xl bg-white/[0.03] backdrop-blur-xl rounded-[40px] border border-white/10 p-6 sm:p-100 shadow-2xl transition-all duration-500 ease-in-out">
           
-          <div className="grid grid-cols-2 gap-8 md:gap-16">
-            {/* Left Column */}
-            <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-2 gap-4 sm:gap-8 justify-items-center">
+            {/* Left Column (Images) */}
+            <div className="flex flex-col gap-4 w-full">
               {leftCards.map((c, i) => (
-                <div 
-                  key={`l-${c.saint.id}-${i}`} 
-                  className={`transition-all duration-500 ${c.isRemoved ? 'opacity-0 scale-90 pointer-events-none' : 'opacity-100 scale-100'}`}
-                >
+                <div key={`l-${c.saint.id}`} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <SaintCard
                     saint={c.saint}
                     side="left"
                     isRevealed={c.isRevealed}
                     isSelected={c.isSelected}
-                    isMatched={c.isMatched}
-                    isRemoved={c.isRemoved}
+                    isMatched={false}
+                    isRemoved={false}
                     onClick={() => clickLeft(i)}
                     disabled={lock}
                   />
@@ -193,20 +177,17 @@ export default function Game1Page() {
               ))}
             </div>
 
-            {/* Right Column */}
-            <div className="flex flex-col gap-4">
+            {/* Right Column (Names) */}
+            <div className="flex flex-col gap-4 w-full">
               {rightCards.map((c, i) => (
-                <div 
-                  key={`r-${c.saint.id}-${i}`} 
-                  className={`transition-all duration-500 ${c.isRemoved ? 'opacity-0 scale-90 pointer-events-none' : 'opacity-100 scale-100'}`}
-                >
+                <div key={`r-${c.saint.id}`} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <SaintCard
                     saint={c.saint}
                     side="right"
                     isRevealed={c.isRevealed}
                     isSelected={c.isSelected}
-                    isMatched={c.isMatched}
-                    isRemoved={c.isRemoved}
+                    isMatched={false}
+                    isRemoved={false}
                     onClick={() => clickRight(i)}
                     disabled={lock}
                   />
@@ -219,9 +200,8 @@ export default function Game1Page() {
       </div>
 
       <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(251, 191, 36, 0.2); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(251, 191, 36, 0.1); border-radius: 10px; }
       `}</style>
     </div>
   )
