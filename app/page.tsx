@@ -39,15 +39,15 @@ export default function LandingPage() {
         {/* HERO LOGO - STABLE WITH SCALE BURST */}
         <div className="relative mb-14 animate-reveal-down flex items-center justify-center">
           {/* Breathing aura sits directly behind the image */}
-          <div className="absolute w-[240px] h-[240px] bg-amber-400/20 blur-[60px] rounded-full animate-pulse-gentle" />
+          <div className="absolute w-[180px] h-[180px] bg-amber-400/20 blur-[60px] rounded-full animate-pulse-gentle" />
           
           {/* Logo is kept straight; only performs a sudden scale pulse */}
           <div className="relative animate-sudden-scale">
             <Image
               src="/jaago.png"
               alt="JAAGO Logo"
-              width={200}
-              height={200}
+              width={160}
+              height={160}
               priority
               className="drop-shadow-[0_0_35px_rgba(251,191,36,0.4)]"
             />
@@ -64,11 +64,11 @@ export default function LandingPage() {
             <span className="h-[1px] w-12 bg-gradient-to-l from-transparent to-amber-500/50" />
           </div>
 
-          <h1 className="text-7xl md:text-9xl font-black text-white tracking-tighter leading-none animate-reveal" style={{ animationDelay: '0.4s' }}>
+          <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter leading-none animate-reveal" style={{ animationDelay: '0.4s' }}>
             Faith <span className="text-transparent bg-clip-text bg-gradient-to-b from-amber-200 to-amber-600 animate-shimmer">Recall</span>
           </h1>
 
-          <p className="text-white/40 text-base md:text-xl max-w-lg mx-auto font-light tracking-wide leading-relaxed animate-reveal" style={{ animationDelay: '0.6s' }}>
+          <p className="text-white/40 text-sm md:text-lg max-w-md mx-auto font-light tracking-wide leading-relaxed animate-reveal" style={{ animationDelay: '0.6s' }}>
             A premium experience that blends <span className="text-white/80 font-medium italic">memory</span>, 
             <span className="text-white/80 font-medium italic"> focus</span>, and 
             <span className="text-white/80 font-medium italic"> faith</span>.
@@ -76,7 +76,7 @@ export default function LandingPage() {
         </div>
 
         {/* ACTION PANEL */}
-        <div className="w-full max-w-lg flex flex-col gap-6 px-6 animate-reveal" style={{ animationDelay: '0.8s' }}>
+        <div className="w-full max-w-md flex flex-col gap-6 px-6 animate-reveal" style={{ animationDelay: '0.8s' }}>
           
           <button
             onClick={() => router.push('/input')}
