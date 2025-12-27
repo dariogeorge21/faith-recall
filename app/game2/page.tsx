@@ -27,25 +27,30 @@ export default function Game2Page() {
       router.push('/verify-code')
       return
     }
+
     const t = setInterval(() => {
       setTotalTimeRemaining((p) => p - 1)
     }, 1000)
+
     return () => clearInterval(t)
   }, [totalTimeRemaining, router])
 
-  /* QUESTION TIMER */
+  /* QUESTION TIMER RESET */
   useEffect(() => {
     setQuestionTimeLeft(15)
   }, [currentQuestionIndex])
 
+  /* QUESTION TIMER */
   useEffect(() => {
     if (questionTimeLeft <= 0) {
       next()
       return
     }
+
     const t = setInterval(() => {
       setQuestionTimeLeft((p) => p - 1)
     }, 1000)
+
     return () => clearInterval(t)
   }, [questionTimeLeft])
 
@@ -58,13 +63,18 @@ export default function Game2Page() {
   }
 
   const onAnswer = (ans: string, time: number) => {
-    if (ans === questions[currentQuestionIndex].correctAnswer) {
+    const current = questions[currentQuestionIndex]
+    if (!current) return
+
+    if (ans === current.correctAnswer) {
       addGame2Score(Math.max(200, 1000 - time * 50))
     }
+
     next()
   }
 
-  if (!questions.length) return null
+  // 🔒 SAFETY GUARD (NO UI CHANGE)
+  if (!questions.length || !questions[currentQuestionIndex]) return null
 
   return (
     <div className="h-screen w-screen overflow-hidden flex flex-col bg-gradient-to-br from-[#05070f] via-[#0b1020] to-[#090312]">
@@ -98,14 +108,12 @@ export default function Game2Page() {
             Question {currentQuestionIndex + 1} of {questions.length}
           </div>
 
-          {/* FIXED CONTENT HEIGHT */}
           <div className="flex-1 flex items-start justify-center">
             <div className="w-full max-w-5xl scale-[0.92] origin-top">
               <QuizQuestion
                 question={questions[currentQuestionIndex]}
                 onAnswer={onAnswer}
                 timeLimit={questionTimeLeft}
-                forceGrid
               />
             </div>
           </div>
