@@ -32,7 +32,7 @@ export default function SaintCard({
         flex items-center justify-center
         transition-all duration-500 ease-out
         bg-[#0b1224]/80 backdrop-blur-md overflow-hidden
-        w-full max-w-[140px] aspect-[2/2]
+        w-full max-w-[200px] aspect-[2/2]
         ${
           isMatched
             ? 'border-2 border-amber-500 shadow-[0_0_25px_rgba(245,158,11,0.4)]'
@@ -45,7 +45,7 @@ export default function SaintCard({
       {/* HIDDEN STATE */}
       {!isRevealed && (
         <div className="flex flex-col items-center justify-center w-full h-full bg-[#05070f]">
-           <span className="text-amber-500/10 text-5xl font-black italic select-none">?</span>
+           <span className="text-amber-500/10 text-6xl font-black italic select-none">?</span>
         </div>
       )}
 
@@ -57,7 +57,7 @@ export default function SaintCard({
             alt={saint.name}
             fill
             className="object-cover object-top"
-            sizes="130px"
+            sizes="200px"
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
@@ -67,7 +67,7 @@ export default function SaintCard({
       {/* NAME SIDE */}
       {isRevealed && side === 'right' && (
         <div className="w-full h-full flex flex-col items-center justify-center px-3 bg-slate-900/80 animate-in flip-in-y duration-500">
-          <span className="text-white text-[11px] uppercase tracking-[0.2em] font-black text-center leading-tight">
+          <span className="text-white text-sm uppercase tracking-[0.2em] font-black text-center leading-tight">
             {saint.name}
           </span>
           <div className="mt-2 h-[1px] w-4 bg-amber-500/50" />

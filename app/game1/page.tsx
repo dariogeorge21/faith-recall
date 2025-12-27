@@ -143,22 +143,22 @@ export default function Game1Page() {
       
       {/* HEADER SECTION */}
       <div className="pt-8 pb-4 text-center shrink-0 z-10">
-        <h1 className={`text-3xl font-black transition-all duration-500 tracking-tighter uppercase ${
+        <h1 className={`text-4xl font-black transition-all duration-500 tracking-tighter uppercase ${
           matchStatus === 'correct' ? 'text-green-400 scale-105' : 
           matchStatus === 'wrong' ? 'text-red-500' : 'text-amber-400'
         }`}>
           {matchStatus === 'correct' ? 'Great Match!' : matchStatus === 'wrong' ? 'Not a Pair' : 'Hall of Saints'}
         </h1>
-        <div className="mt-3">
-          <Timer seconds={timeRemaining} size="medium" />
+        <div className="mt-4">
+          <Timer seconds={timeRemaining} size="large" />
         </div>
       </div>
 
       {/* AUTO-SHRINKING CONTAINER */}
       <div className="flex-1 w-full flex items-start justify-center px-4 overflow-y-auto custom-scrollbar pb-10">
-        <div className="w-full max-w-xl bg-white/[0.03] backdrop-blur-xl rounded-[40px] border border-white/10 p-6 sm:p-100 shadow-2xl transition-all duration-500 ease-in-out">
+        <div className="w-full max-w-5xl bg-white/[0.03] backdrop-blur-xl rounded-[40px] border border-white/10 p-8 sm:p-12 shadow-2xl transition-all duration-500 ease-in-out">
           
-          <div className="grid grid-cols-2 gap-4 sm:gap-8 justify-items-center">
+          <div className="grid grid-cols-2 gap-6 sm:gap-10 justify-items-center">
             {/* Left Column (Images) */}
             <div className="flex flex-col gap-4 w-full">
               {leftCards.map((c, i) => (

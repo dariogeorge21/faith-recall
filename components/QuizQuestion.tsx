@@ -98,17 +98,16 @@ export default function QuizQuestion({
   const showFeedback = isAnswered && selectedAnswer !== null
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      {/* Timer */}
+    <div className="w-full max-w-5xl mx-auto">
       <div className="mb-6 text-center">
-        <div className="inline-block px-6 py-2 bg-burgundy-600 text-white rounded-lg text-2xl font-bold">
+        <div className="inline-block px-8 py-3 bg-burgundy-600 text-white rounded-lg text-3xl font-bold">
           {timeRemaining}s
         </div>
       </div>
 
       {/* Emojis */}
       <div className="mb-8 text-center">
-        <div className="flex justify-center gap-4 text-6xl md:text-8xl">
+        <div className="flex justify-center gap-6 text-7xl md:text-9xl">
           {question.emojis.map((emoji, index) => (
             <span key={index}>{emoji}</span>
           ))}
@@ -117,7 +116,7 @@ export default function QuizQuestion({
 
       {/* Question */}
       <div className="mb-8 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold text-burgundy-700">
+        <h2 className="text-4xl md:text-5xl font-bold text-burgundy-700">
           {question.question}
         </h2>
       </div>
@@ -135,8 +134,8 @@ export default function QuizQuestion({
               onClick={() => handleAnswer(option.label)}
               disabled={disabled || isAnswered}
               className={`
-                px-6 py-4 text-left rounded-lg text-xl md:text-2xl font-semibold
-                transition-all touch-manipulation min-h-[80px]
+                px-8 py-5 text-left rounded-lg text-2xl md:text-3xl font-semibold
+                transition-all touch-manipulation min-h-[100px]
                 ${
                   showCorrect
                     ? 'bg-green-500 text-white border-4 border-green-600 animate-flicker'
@@ -160,7 +159,7 @@ export default function QuizQuestion({
 
       {/* Time's up message */}
       {timeRemaining === 0 && !isAnswered && (
-        <div className="mt-4 text-center text-2xl font-bold text-red-600">
+        <div className="mt-4 text-center text-3xl font-bold text-red-600">
           Time's up!
         </div>
       )}

@@ -1,60 +1,171 @@
 'use client'
 
-import { Mic, Keyboard } from 'lucide-react'
 import { useState } from 'react'
-import AlphabeticKeyboard from './AlphabeticKeyboard'
+import { createPortal } from 'react-dom'
 
 interface VoiceNameInputProps {
   value: string
-  onChange: (v: string) => void
+  onChange: (value: string) => void
 }
 
-export default function VoiceNameInput({
-  value,
-  onChange,
-}: VoiceNameInputProps) {
-  const [showKeyboard, setShowKeyboard] = useState(false)
+const KEYS = [
+  ['Q','W','E','R','T','Y','U','I','O','P'],
+  ['A','S','D','F','G','H','J','K','L'],
+  ['Z','X','C','V','B','N','M'],
+]
+
+export default function VoiceNameInput({ value, onChange }: VoiceNameInputProps) {
+  const [open, setOpen] = useState(false)
+
+  const addChar = (char: string) => {
+    onChange(value + char)
+  }
+
+  const backspace = () => {
+    onChange(value.slice(0, -1))
+  }
 
   return (
-    <div className="relative">
-      {/* INPUT ROW */}
-      <div className="flex items-center gap-3 rounded-xl bg-white/5 border border-white/10 px-4 py-3">
-        {/* MIC */}
-        <button
-          type="button"
-          className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 transition"
-        >
-          <Mic size={18} />
-        </button>
+    <>
+      {/* DISPLAY INPUT */}
+      <div
+        onClick={() => setOpen(true)}
+        className="
+          flex items-center justify-between
+          px-5 py-4
+          rounded-xl
+          bg-white/[0.06]
+          border border-white/10
+          backdrop-blur-xl
+          cursor-pointer
+          hover:bg-white/[0.08]
+          transition
+        "
+      >
+        <span className={value ? 'text-white' : 'text-white/40'}>
+          {value || 'Tap to input identity...'}
+        </span>
 
-        {/* INPUT */}
-        <input
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="Tap to input identity..."
-          className="flex-1 bg-transparent outline-none text-white placeholder:text-white/40"
-        />
-
-        {/* KEYBOARD ICON */}
-        <button
-          type="button"
-          onClick={() => setShowKeyboard((v) => !v)}
-          className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 text-white/70 hover:bg-white/20 transition"
-        >
-          <Keyboard size={18} />
-        </button>
+        <span className="text-white/60 text-lg">⌨</span>
       </div>
 
-      {/* IN-APP KEYBOARD */}
-      {showKeyboard && (
-        <div className="absolute left-0 right-0 top-full z-50 mt-3 rounded-2xl bg-[#0b1020] border border-white/10 shadow-2xl">
-          <AlphabeticKeyboard
-            value={value}
-            onChange={onChange}
-            onClose={() => setShowKeyboard(false)}
-          />
-        </div>
+      {/* KEYBOARD OVERLAY */}
+      {open && createPortal(
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end justify-center">
+          <div
+            className="
+              w-full max-w-5xl
+              rounded-t-[36px]
+              px-10 py-8
+              bg-gradient-to-b from-[#0b1020] to-[#070b14]
+              border-t border-white/10
+              shadow-[0_-40px_120px_rgba(0,0,0,0.9)]
+            "
+          >
+            {/* Header */}
+            <div className="flex justify-between items-center mb-6">
+              <span className="text-white font-semibold tracking-wide">
+                On-Screen Keyboard
+              </span>
+              <button
+                onClick={() => setOpen(false)}
+                className="text-white/70 hover:text-white text-xl"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Current Input Display */}
+            <div className="text-center mb-6">
+              <div className="text-4xl font-bold text-white bg-white/10 rounded-xl py-4 px-6 border border-white/20">
+                {value || 'Start typing...'}
+              </div>
+            </div>
+
+            {/* Keys */}
+            <div className="space-y-3">
+              {KEYS.map((row, r) => (
+                <div key={r} className={`flex justify-center gap-2 ${r === 1 ? 'ml-6' : r === 2 ? 'ml-12' : ''}`}>
+                  {row.map((key) => (
+                    <button
+                      key={key}
+                      onClick={() => addChar(key)}
+                      className="
+                        w-14 h-14 rounded-lg
+                        bg-white/10
+                        text-white
+                        font-medium
+                        hover:bg-white/20
+                        transition
+                        flex items-center justify-center
+                      "
+                    >
+                      {key}
+                    </button>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            {/* Actions */}
+            <div className="mt-6 flex gap-4 justify-center">
+              <button
+                onClick={() => addChar(' ')}
+                className="
+                  flex-1 py-4 rounded-xl
+                  bg-white/10
+                  text-white
+                  hover:bg-white/20
+                  transition
+                "
+              >
+                Space
+              </button>
+
+              <button
+                onClick={backspace}
+                className="
+                  px-6 py-4 rounded-xl
+                  bg-red-500/20
+                  text-red-300
+                  hover:bg-red-500/30
+                  transition
+                "
+              >
+                ⌫
+              </button>
+
+              <button
+                onClick={() => onChange('')}
+                className="
+                  px-6 py-4 rounded-xl
+                  bg-yellow-500/20
+                  text-yellow-300
+                  hover:bg-yellow-500/30
+                  transition
+                "
+              >
+                Clear
+              </button>
+
+              <button
+                onClick={() => setOpen(false)}
+                className="
+                  px-6 py-4 rounded-xl
+                  bg-amber-500
+                  text-black
+                  font-semibold
+                  hover:bg-amber-400
+                  transition
+                "
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
       )}
-    </div>
+    </>
   )
 }

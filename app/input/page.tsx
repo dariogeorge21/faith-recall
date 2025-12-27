@@ -8,8 +8,7 @@ import StateSelector from '@/components/StateSelector'
 
 export default function InputPage() {
   const router = useRouter()
-  
-  // FIXED: Using selectors ensures actions are correctly mapped and stable
+
   const setPlayerName = useGameStore((state) => state.setPlayerName)
   const setPlayerRegion = useGameStore((state) => state.setPlayerRegion)
   const reset = useGameStore((state) => state.reset)
@@ -19,7 +18,6 @@ export default function InputPage() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    // Standard practice to clear previous session data on mount
     reset()
   }, [reset])
 
@@ -35,64 +33,155 @@ export default function InputPage() {
   const canStart = name && region
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#060b1e] via-[#070b14] to-black px-4">
+    <div className="h-screen w-screen flex items-center justify-center bg-gradient-to-br from-[#060b1e] via-[#070b14] to-black px-8">
 
-      {/* Animated Card */}
-      <div className="animate-fade-up w-full max-w-md rounded-[32px] bg-white/[0.06] backdrop-blur-2xl border border-white/10 shadow-[0_50px_140px_rgba(0,0,0,0.85)] px-7 py-9">
-
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-extrabold text-white tracking-tight">
-            Profile Setup
+      {/* MAIN CARD */}
+      <div
+        className="
+          w-full max-w-5xl h-[88vh]
+          flex flex-col
+          rounded-[40px]
+          bg-white/[0.06]
+          backdrop-blur-2xl
+          border border-white/10
+          shadow-[0_60px_160px_rgba(0,0,0,0.85)]
+          px-16 py-12
+          animate-cardEnter
+        "
+      >
+        {/* HEADER */}
+        <div className="shrink-0 text-center mb-8 animate-fadeDown">
+          <h1 className="text-5xl font-extrabold text-white tracking-tight">
+            We want to know you
           </h1>
-          <p className="mt-2 text-xs tracking-[0.35em] uppercase text-amber-400">
-            Prepare for the Challenge
+          <p className="mt-2 text-base text-white/70">
+            Prepare for the challenge!
           </p>
         </div>
 
-        {/* Player Name */}
-        <div className="mb-7">
-          <label className="block text-sm text-white/70 mb-2">
-            Player Name
-          </label>
-          {/* Passing local state setter to ensure keyboard typing works instantly */}
-          <VoiceNameInput value={name} onChange={setName} />
-        </div>
+        {/* CONTENT */}
+        <div className="flex-1 flex flex-col gap-6 overflow-hidden">
 
-        {/* Region */}
-        <div className="mb-7">
-          <label className="block text-sm text-white/70 mb-2">
-            Region (State)
-          </label>
-          <div className="max-h-[200px] overflow-y-auto pr-1 rounded-lg">
-            <StateSelector value={region} onChange={setRegion} />
+          {/* NAME */}
+          <div className="shrink-0 animate-fadeUp delay-100">
+            <label className="block text-base text-white/70 mb-3">
+              Player Name
+            </label>
+            <VoiceNameInput value={name} onChange={setName} />
+            <p className="mt-2 text-sm text-purple-400">
+              Keyboard mode active
+            </p>
           </div>
-        </div>
 
-        {/* Error */}
-        {error && (
-          <div className="mb-5 rounded-xl bg-red-500/15 border border-red-400/30 p-3 text-center text-sm text-red-300">
-            {error}
+          {/* REGION */}
+          <div className="flex-1 flex flex-col overflow-hidden animate-fadeUp delay-200">
+            <label className="block text-base text-white/70 mb-3 shrink-0">
+              Region (State)
+            </label>
+
+            <div className="flex-1 overflow-y-auto pr-2 rounded-xl">
+              <StateSelector value={region} onChange={setRegion} />
+            </div>
           </div>
-        )}
+
+          {/* ERROR */}
+          {error && (
+            <div className="shrink-0 rounded-xl bg-red-500/15 border border-red-400/30 p-4 text-center text-sm text-red-300 animate-shake">
+              {error}
+            </div>
+          )}
+        </div>
 
         {/* CTA */}
-        <button
-          onClick={handleStart}
-          disabled={!canStart}
-          className={`
-            w-full rounded-xl py-4 font-bold tracking-wide transition-all duration-200
-            ${
-              canStart
-                ? 'bg-amber-500 text-black hover:bg-amber-400 hover:scale-[1.02] animate-pulse-soft'
-                : 'bg-white/10 text-white/40 cursor-not-allowed'
-            }
-          `}
-        >
-          Start Game
-        </button>
-
+        <div className="shrink-0 pt-6 animate-fadeUp delay-300">
+          <button
+            onClick={handleStart}
+            disabled={!canStart}
+            className={`
+              w-full rounded-xl py-6 text-xl font-semibold tracking-wide
+              transition-all duration-200
+              ${
+                canStart
+                  ? 'bg-amber-500 text-black hover:bg-amber-400 hover:scale-[1.01] animate-softPulse'
+                  : 'bg-white/10 text-white/40 cursor-not-allowed'
+              }
+            `}
+          >
+            Start Game
+          </button>
+        </div>
       </div>
+
+      {/* ANIMATIONS */}
+      <style jsx global>{`
+        @keyframes cardEnter {
+          from {
+            opacity: 0;
+            transform: scale(0.96);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        @keyframes fadeDown {
+          from {
+            opacity: 0;
+            transform: translateY(-16px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fadeUp {
+          from {
+            opacity: 0;
+            transform: translateY(16px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-6px); }
+          75% { transform: translateX(6px); }
+        }
+
+        @keyframes softPulse {
+          0%, 100% { box-shadow: 0 0 0 rgba(251,191,36,0); }
+          50% { box-shadow: 0 0 32px rgba(251,191,36,0.35); }
+        }
+
+        .animate-cardEnter {
+          animation: cardEnter 0.6s ease-out forwards;
+        }
+
+        .animate-fadeDown {
+          animation: fadeDown 0.5s ease-out forwards;
+        }
+
+        .animate-fadeUp {
+          animation: fadeUp 0.5s ease-out forwards;
+        }
+
+        .animate-shake {
+          animation: shake 0.4s ease-in-out;
+        }
+
+        .animate-softPulse {
+          animation: softPulse 2.5s ease-in-out infinite;
+        }
+
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+      `}</style>
     </div>
   )
 }

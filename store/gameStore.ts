@@ -14,6 +14,7 @@ interface GameState {
   game2Score: number
   game2Answers: number
   totalScore: number
+  isPunished: boolean
 
   setPlayerName: (name: string) => void
   setPlayerRegion: (region: string) => void
@@ -23,6 +24,7 @@ interface GameState {
   incrementGame1Combo: () => void
   resetGame1Combo: () => void
   addGame2Score: (points: number) => void
+  setIsPunished: (val: boolean) => void
   saveResults: () => Promise<{ success: boolean; error?: any }>
   reset: () => void
 }
@@ -40,6 +42,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   game2Score: 0,
   game2Answers: 0,
   totalScore: 0,
+  isPunished: false,
 
   setPlayerName: (name) => set({ playerName: name }),
   setPlayerRegion: (region) => set({ playerRegion: region }),
@@ -82,6 +85,8 @@ export const useGameStore = create<GameState>((set, get) => ({
         totalScore: state.game1Score + newGame2Score
       };
     }),
+
+  setIsPunished: (val) => set({ isPunished: val }),
 
   saveResults: async () => {
     const state = get()
@@ -128,5 +133,6 @@ export const useGameStore = create<GameState>((set, get) => ({
       game2Score: 0,
       game2Answers: 0,
       totalScore: 0,
+      isPunished: false,
     }),
 }))

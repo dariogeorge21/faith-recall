@@ -17,28 +17,28 @@ export default function NumericKeypad({ onDigitClick, onBackspace, onClear }: Nu
         <button
           key={digit}
           onClick={() => onDigitClick(digit)}
-          className="h-14 md:h-16 rounded-2xl bg-white/[0.03] border border-white/5 text-2xl font-bold text-white/90 hover:bg-[#c9a24d] hover:text-black transition-all active:scale-95"
+          className="h-16 md:h-20 rounded-2xl bg-white/[0.03] border border-white/5 text-3xl font-bold text-white/90 hover:bg-[#c9a24d] hover:text-black transition-all active:scale-95"
         >
           {digit}
         </button>
       ))}
       <button 
         onClick={onClear} 
-        className="h-14 md:h-16 rounded-2xl bg-white/[0.01] text-[#c9a24d]/40 flex items-center justify-center hover:text-[#c9a24d] transition-colors"
+        className="h-16 md:h-20 rounded-2xl bg-white/[0.01] text-[#c9a24d]/40 flex items-center justify-center hover:text-[#c9a24d] transition-colors"
       >
-        <LucideRotateCcw className="w-6 h-6" />
+        <LucideRotateCcw className="w-7 h-7" />
       </button>
       <button 
         onClick={() => onDigitClick('0')} 
-        className="h-14 md:h-16 rounded-2xl bg-white/[0.03] border border-white/5 text-2xl font-bold text-white/90 hover:bg-[#c9a24d] hover:text-black transition-all active:scale-95"
+        className="h-16 md:h-20 rounded-2xl bg-white/[0.03] border border-white/5 text-3xl font-bold text-white/90 hover:bg-[#c9a24d] hover:text-black transition-all active:scale-95"
       >
         0
       </button>
       <button 
         onClick={onBackspace} 
-        className="h-14 md:h-16 rounded-2xl bg-white/[0.01] text-[#c9a24d]/40 flex items-center justify-center hover:text-[#c9a24d] transition-colors"
+        className="h-16 md:h-20 rounded-2xl bg-white/[0.01] text-[#c9a24d]/40 flex items-center justify-center hover:text-[#c9a24d] transition-colors"
       >
-        <LucideDelete className="w-6 h-6" />
+        <LucideDelete className="w-7 h-7" />
       </button>
     </div>
   )
