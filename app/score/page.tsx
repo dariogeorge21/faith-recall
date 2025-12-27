@@ -45,7 +45,13 @@ export default function LeaderboardPage() {
         .order('score', { ascending: false })
         .limit(100)
 
-      if (error) throw error
+      // ✅ FIX: DO NOT THROW
+      if (error) {
+        console.warn('Leaderboard fetch error:', error.message)
+        setPlayers([])
+        return
+      }
+
       setPlayers(data || [])
     } catch {
       setError('Failed to load leaderboard')
@@ -72,7 +78,7 @@ export default function LeaderboardPage() {
     fetchLeaderboard()
   }
 
-  /* ======================= 🔥 PUNISHMENT UI (UI FIX ONLY) ======================= */
+  /* ======================= 🔥 PUNISHMENT UI ======================= */
 
   if (isPunished) {
     const completed = hailMarys.filter(Boolean).length
@@ -169,11 +175,11 @@ export default function LeaderboardPage() {
     )
   }
 
-  /* ======================= 🏆 LEADERBOARD (UNCHANGED) ======================= */
+  /* ======================= 🏆 LEADERBOARD ======================= */
 
   return (
     <div className="h-screen bg-gradient-to-br from-[#060b1e] via-[#070b14] to-black px-4 py-8 flex justify-center">
-        <div className="w-full max-w-5xl flex flex-col h-full">
+      <div className="w-full max-w-5xl flex flex-col h-full">
 
         <div className="text-center mb-6 shrink-0">
           <h1
