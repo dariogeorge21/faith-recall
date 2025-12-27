@@ -8,37 +8,87 @@ interface NumericKeypadProps {
   onClear: () => void
 }
 
-export default function NumericKeypad({ onDigitClick, onBackspace, onClear }: NumericKeypadProps) {
-  const digits = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+export default function NumericKeypad({
+  onDigitClick,
+  onBackspace,
+  onClear,
+}: NumericKeypadProps) {
+  const digits = ['1','2','3','4','5','6','7','8','9']
 
   return (
-    <div className="w-full max-w-sm mx-auto grid grid-cols-3 gap-3 animate-in fade-in slide-in-from-right-4 duration-500">
+    <div className="w-full max-w-xs mx-auto grid grid-cols-3 gap-2 animate-in fade-in slide-in-from-right-4 duration-500">
       {digits.map((digit) => (
         <button
           key={digit}
           onClick={() => onDigitClick(digit)}
-          className="h-16 md:h-20 rounded-2xl bg-white/[0.03] border border-white/5 text-3xl font-bold text-white/90 hover:bg-[#c9a24d] hover:text-black transition-all active:scale-95"
+          className="
+            h-12
+            rounded-xl
+            bg-white/[0.03]
+            border border-white/5
+            text-xl
+            font-bold
+            text-white/90
+            hover:bg-[#c9a24d]
+            hover:text-black
+            transition-all
+            active:scale-95
+          "
         >
           {digit}
         </button>
       ))}
-      <button 
-        onClick={onClear} 
-        className="h-16 md:h-20 rounded-2xl bg-white/[0.01] text-[#c9a24d]/40 flex items-center justify-center hover:text-[#c9a24d] transition-colors"
+
+      {/* CLEAR */}
+      <button
+        onClick={onClear}
+        className="
+          h-12
+          rounded-xl
+          bg-white/[0.01]
+          text-[#c9a24d]/40
+          flex items-center justify-center
+          hover:text-[#c9a24d]
+          transition-colors
+        "
       >
-        <LucideRotateCcw className="w-7 h-7" />
+        <LucideRotateCcw className="w-5 h-5" />
       </button>
-      <button 
-        onClick={() => onDigitClick('0')} 
-        className="h-16 md:h-20 rounded-2xl bg-white/[0.03] border border-white/5 text-3xl font-bold text-white/90 hover:bg-[#c9a24d] hover:text-black transition-all active:scale-95"
+
+      {/* ZERO */}
+      <button
+        onClick={() => onDigitClick('0')}
+        className="
+          h-12
+          rounded-xl
+          bg-white/[0.03]
+          border border-white/5
+          text-xl
+          font-bold
+          text-white/90
+          hover:bg-[#c9a24d]
+          hover:text-black
+          transition-all
+          active:scale-95
+        "
       >
         0
       </button>
-      <button 
-        onClick={onBackspace} 
-        className="h-16 md:h-20 rounded-2xl bg-white/[0.01] text-[#c9a24d]/40 flex items-center justify-center hover:text-[#c9a24d] transition-colors"
+
+      {/* BACKSPACE */}
+      <button
+        onClick={onBackspace}
+        className="
+          h-12
+          rounded-xl
+          bg-white/[0.01]
+          text-[#c9a24d]/40
+          flex items-center justify-center
+          hover:text-[#c9a24d]
+          transition-colors
+        "
       >
-        <LucideDelete className="w-7 h-7" />
+        <LucideDelete className="w-5 h-5" />
       </button>
     </div>
   )

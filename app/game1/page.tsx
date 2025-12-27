@@ -156,7 +156,7 @@ export default function Game1Page() {
 
       {/* AUTO-SHRINKING CONTAINER */}
       <div className="flex-1 w-full flex items-start justify-center px-4 overflow-y-auto custom-scrollbar pb-10">
-        <div className="w-full max-w-5xl bg-white/[0.03] backdrop-blur-xl rounded-[40px] border border-white/10 p-8 sm:p-12 shadow-2xl transition-all duration-500 ease-in-out">
+        <div className="w-full max-w-2xl bg-white/[0.03] backdrop-blur-xl rounded-[40px] border border-white/10 p-8 sm:p-12 shadow-2xl transition-all duration-500 ease-in-out">
           
           <div className="grid grid-cols-2 gap-6 sm:gap-10 justify-items-center">
             {/* Left Column (Images) */}
