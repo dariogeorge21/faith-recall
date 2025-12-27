@@ -95,6 +95,6 @@ export const BIBLE_QUIZ_DATA: QuizQuestion[] = [
       { label: 'C', text: 'The Good Samaritan' },
       { label: 'D', text: 'The Nativity' }
     ],
-    correctAnswer: 'D'
+    correctAnswer: 'A'
   },
 ]
