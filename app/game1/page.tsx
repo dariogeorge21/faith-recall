@@ -192,7 +192,7 @@ export default function Game1Page() {
   }
 
   return (
-    <div className="h-screen w-full flex flex-col bg-gradient-to-br from-[#05070f] via-[#0b1020] to-black overflow-hidden font-sans">
+    <div className="h-screen w-full flex flex-col bg-gradient-to-br from-[#05070f] via-[#0b1020] to-black font-sans" style={{ overflow: 'hidden' }}>
       
       {/* LOADING SCREEN */}
       {!imagesLoaded && (
@@ -217,7 +217,7 @@ export default function Game1Page() {
       )}
 
       {/* GAME CONTENT */}
-      <div className={`h-full w-full transition-opacity duration-700 ${gameStarted ? 'opacity-100' : 'opacity-0'}`}>
+      <div className={`flex-1 w-full flex flex-col transition-opacity duration-700 ${gameStarted ? 'opacity-100' : 'opacity-0'} overflow-hidden`}>
         {/* HEADER SECTION */}
         <div className="pt-12 pb-6 text-center shrink-0 z-10">
           <h1 className={`text-6xl font-black transition-all duration-500 tracking-tighter uppercase ${
@@ -247,8 +247,8 @@ export default function Game1Page() {
         )}
 
         {/* AUTO-SHRINKING CONTAINER */}
-        <div className="flex-1 w-full flex items-start justify-center px-12 overflow-y-auto custom-scrollbar pb-10">
-          <div className="w-full max-w-7xl bg-white/[0.03] backdrop-blur-xl rounded-[40px] border border-white/10 p-12 shadow-2xl transition-all duration-500 ease-in-out">
+        <div className="flex-1 w-full flex items-start justify-center px-12 overflow-y-auto custom-scrollbar pb-10" style={{ minHeight: 0 }}>
+          <div className="w-full max-w-7xl bg-white/[0.03] backdrop-blur-xl rounded-[40px] border border-white/10 p-12 shadow-2xl transition-all duration-500 ease-in-out my-auto">
             
             <div className="grid grid-cols-2 gap-16 justify-items-center">
               {/* Left Column (Images) */}
