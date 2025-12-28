@@ -51,10 +51,10 @@ export default function InputPage() {
       >
         {/* HEADER */}
         <div className="shrink-0 text-center mb-8 animate-fadeDown">
-          <h1 className="text-5xl font-extrabold text-white tracking-tight">
+          <h1 className="text-4xl font-extrabold text-white tracking-tight">
             We want to know you
           </h1>
-          <p className="mt-2 text-base text-white/70">
+          <p className="mt-2 text-sm text-white/70">
             Prepare for the challenge!
           </p>
         </div>
@@ -64,7 +64,7 @@ export default function InputPage() {
 
           {/* NAME */}
           <div className="shrink-0 animate-fadeUp delay-100">
-            <label className="block text-base text-white/70 mb-3">
+            <label className="block text-sm text-white/70 mb-3">
               Player Name
             </label>
             <VoiceNameInput value={name} onChange={setName} />
@@ -73,16 +73,17 @@ export default function InputPage() {
             </p>
           </div>
 
-          {/* REGION */}
-          <div className="flex-1 flex flex-col overflow-hidden animate-fadeUp delay-200">
-            <label className="block text-base text-white/70 mb-3 shrink-0">
-              Region (State)
-            </label>
+                {/* REGION */}
+                <div className="flex-1 grid grid-cols-2 gap-4 overflow-hidden animate-fadeUp delay-200">
+                <label className="block text-sm text-white/70 mb-3 col-span-2">
+                  Region (State)
+                </label>
 
-            <div className="flex-1 overflow-y-auto pr-2 rounded-xl">
-              <StateSelector value={region} onChange={setRegion} />
-            </div>
-          </div>
+                <div className="col-span-2 overflow-y-auto pr-2 rounded-xl">
+                  <StateSelector value={region} onChange={setRegion} />
+                </div>
+                </div>
+
 
           {/* ERROR */}
           {error && (
