@@ -13,6 +13,8 @@ interface SaintCardProps {
   isRemoved: boolean
   disabled?: boolean
   onClick: () => void
+  shouldPulse?: boolean
+  shouldHighlight?: boolean
 }
 
 export default function SaintCard({
@@ -25,6 +27,8 @@ export default function SaintCard({
   isRemoved,
   disabled,
   onClick,
+  shouldPulse,
+  shouldHighlight,
 }: SaintCardProps) {
   const [isFlipping, setIsFlipping] = useState(false)
 
@@ -52,10 +56,13 @@ export default function SaintCard({
             ? 'border-4 border-green-400 shadow-[0_0_40px_rgba(74,222,128,0.6)] scale-105 animate-pulse'
             : isWrong
             ? 'border-4 border-red-500 shadow-[0_0_30px_rgba(239,68,68,0.5)] animate-shake-card'
+            : shouldHighlight
+            ? 'border-3 border-green-400 shadow-[0_0_40px_rgba(74,222,128,0.5)] animate-pulse-highlight'
             : isSelected
             ? 'border-3 border-amber-400 shadow-[0_0_25px_rgba(251,191,36,0.4)] scale-105'
             : 'border-2 border-white/10 hover:border-amber-500/50 hover:scale-102 hover:shadow-[0_0_20px_rgba(251,191,36,0.2)]'
         }
+        ${shouldPulse && !isRevealed ? 'animate-pulse-gentle-card' : ''}
         ${isFlipping ? 'animate-flip-in' : ''}
         ${disabled && !isMatched ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}
       `}
@@ -129,12 +136,38 @@ export default function SaintCard({
           75% { transform: translateX(8px) rotate(2deg); }
         }
         
+        @keyframes pulse-gentle {
+          0%, 100% {
+            box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.2);
+          }
+          50% {
+            box-shadow: 0 0 25px 8px rgba(251, 191, 36, 0.15);
+          }
+        }
+        
+        @keyframes pulse-highlight {
+          0%, 100% {
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.4), inset 0 0 20px rgba(74, 222, 128, 0.1);
+          }
+          50% {
+            box-shadow: 0 0 40px rgba(74, 222, 128, 0.6), inset 0 0 25px rgba(74, 222, 128, 0.15);
+          }
+        }
+        
         .animate-flip-in {
           animation: flip-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
         .animate-shake-card {
           animation: shake-card 0.5s ease-in-out;
+        }
+        
+        .animate-pulse-gentle-card {
+          animation: pulse-gentle 2.5s ease-in-out infinite;
+        }
+        
+        .animate-pulse-highlight {
+          animation: pulse-highlight 1.5s ease-in-out infinite;
         }
         
         .scale-102 {

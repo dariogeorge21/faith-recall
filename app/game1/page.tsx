@@ -35,7 +35,13 @@ export default function Game1Page() {
   const [gameStarted, setGameStarted] = useState(false)
   const [matchedPairs, setMatchedPairs] = useState<Set<number>>(new Set())
   const [wrongPairs, setWrongPairs] = useState<Set<string>>(new Set())
+  const [showTutorial, setShowTutorial] = useState(false)
+  const [isFirstCardSelected, setIsFirstCardSelected] = useState(false)
+  const [showIdleHint, setShowIdleHint] = useState(false)
+  const [hasInteracted, setHasInteracted] = useState(false)
   const timerStartedRef = useRef(false)
+  const idleTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const lastInteractionRef = useRef<number>(0)
 
   /* ---------- PRELOAD IMAGES ---------- */
   useEffect(() => {
@@ -59,15 +65,38 @@ export default function Game1Page() {
       .then(() => {
         setTimeout(() => {
           setImagesLoaded(true)
-          setTimeout(() => setGameStarted(true), 300)
+          setTimeout(() => {
+            setGameStarted(true)
+            lastInteractionRef.current = Date.now()
+            startIdleTimer()
+          }, 300)
         }, 500)
       })
       .catch(err => {
         console.error('Error preloading images:', err)
         setImagesLoaded(true)
         setGameStarted(true)
+        lastInteractionRef.current = Date.now()
+        startIdleTimer()
       })
   }, [])
+
+  /* ---------- IDLE DETECTION FOR HINTS ---------- */
+  const startIdleTimer = () => {
+    if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
+    idleTimerRef.current = setTimeout(() => {
+      if (!hasInteracted && gameStarted && showTutorial) {
+        setShowIdleHint(true)
+      }
+    }, 8000) // Show hint after 8 seconds of no interaction
+  }
+
+  const handleUserInteraction = () => {
+    setHasInteracted(true)
+    setShowIdleHint(false)
+    lastInteractionRef.current = Date.now()
+    if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
+  }
 
   /* ---------- INITIALIZE GAME ---------- */
   useEffect(() => {
@@ -121,6 +150,11 @@ export default function Game1Page() {
   /* ---------- CLICK HANDLERS ---------- */
   const clickLeft = (index: number) => {
     if (lock) return
+    handleUserInteraction()
+    if (!isFirstCardSelected) {
+      setIsFirstCardSelected(true)
+      setShowTutorial(false)
+    }
     if (selectedLeft === index) {
       setLeftCards(prev => prev.map((c, i) => i === index ? { ...c, isRevealed: false, isSelected: false } : c))
       setSelectedLeft(null)
@@ -136,6 +170,7 @@ export default function Game1Page() {
 
   const clickRight = (index: number) => {
     if (lock) return
+    handleUserInteraction()
     if (selectedRight === index) {
       setRightCards(prev => prev.map((c, i) => i === index ? { ...c, isRevealed: false, isSelected: false } : c))
       setSelectedRight(null)
@@ -219,15 +254,10 @@ export default function Game1Page() {
       {/* GAME CONTENT */}
       <div className={`flex-1 w-full flex flex-col transition-opacity duration-700 ${gameStarted ? 'opacity-100' : 'opacity-0'} overflow-hidden`}>
         {/* HEADER SECTION */}
-        <div className="pt-12 pb-6 text-center shrink-0 z-10">
-          <h1 className={`text-6xl font-black transition-all duration-500 tracking-tighter uppercase ${
-            matchStatus === 'correct' ? 'text-green-400 scale-110 drop-shadow-[0_0_30px_rgba(74,222,128,0.6)]' : 
-            matchStatus === 'wrong' ? 'text-red-500 animate-shake' : 'text-amber-400 drop-shadow-[0_0_20px_rgba(251,191,36,0.4)]'
-          }`}>
-            {matchStatus === 'correct' ? '🎉 Perfect Match!' : matchStatus === 'wrong' ? '❌ Try Again' : '✨ Hall of Saints'}
-          </h1>
-          <div className="mt-6">
-            <Timer seconds={timeRemaining} size="large" />
+        <div className="pt-6 pb-6 text-center shrink-0 z-10 w-full">
+          
+          <div className="mt-0">
+            <Timer seconds={timeRemaining} size="small" />
           </div>
         </div>
 
@@ -246,6 +276,48 @@ export default function Game1Page() {
           </div>
         )}
 
+        {/* TUTORIAL OVERLAY - First Time Guidance */}
+        {showTutorial && gameStarted && (
+          <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-500">
+            <div className="text-center space-y-6 px-6 animate-in zoom-in duration-700">
+              <div className="text-6xl animate-bounce">👇</div>
+              <div className="text-3xl font-bold text-white drop-shadow-lg">
+                Click any card to begin
+              </div>
+              <div className="text-xl text-white/80 max-w-md mx-auto">
+                Match saints with their names
+              </div>
+              <div className="pt-4 text-sm text-white/60 animate-pulse">
+                (Click to dismiss)
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* IDLE HINT - Gentle Reminder */}
+        {showIdleHint && !isFirstCardSelected && !showTutorial && (
+          <div className="absolute top-32 left-1/2 transform -translate-x-1/2 z-30 animate-in fade-in slide-in-from-top-4 duration-500">
+            <div className="bg-amber-400/20 border border-amber-400/40 rounded-full px-6 py-3 backdrop-blur-sm">
+              <p className="text-amber-200 font-semibold text-center">
+                ✨ Tap any card to start matching
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* FIRST CARD GUIDANCE - After First Selection */}
+        {isFirstCardSelected && selectedLeft !== null && selectedRight === null && !showTutorial && (
+          <div className="absolute top-40 right-12 z-20 animate-in fade-in slide-in-from-right-4 duration-500">
+            <div className="bg-green-400/20 border border-green-400/40 rounded-2xl px-6 py-4 backdrop-blur-sm flex items-center gap-3">
+              <span className="text-2xl animate-pulse">👉</span>
+              <div>
+                <p className="text-green-200 font-semibold">Find the match</p>
+                <p className="text-green-100/70 text-sm">on this side</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* AUTO-SHRINKING CONTAINER */}
         <div className="flex-1 w-full flex items-start justify-center px-12 overflow-y-auto custom-scrollbar pb-10" style={{ minHeight: 0 }}>
           <div className="w-full max-w-7xl bg-white/[0.03] backdrop-blur-xl rounded-[40px] border border-white/10 p-12 shadow-2xl transition-all duration-500 ease-in-out my-auto">
@@ -256,11 +328,12 @@ export default function Game1Page() {
                 {leftCards.map((c, i) => {
                   const isCurrentlyMatched = matchedPairs.has(c.saint.id) && selectedLeft === i
                   const isWrong = Array.from(wrongPairs).some(pair => pair.startsWith(`${i}-`))
+                  const shouldHighlight = !isFirstCardSelected && !showTutorial
                   
                   return (
                     <div 
                       key={`l-${c.saint.id}`} 
-                      className="animate-in fade-in slide-in-from-left-8 duration-700"
+                      className={`animate-in fade-in slide-in-from-left-8 duration-700 ${shouldHighlight && !c.isRevealed ? 'animate-pulse-gentle' : ''}`}
                       style={{ animationDelay: `${i * 50}ms` }}
                     >
                       <SaintCard
@@ -273,6 +346,7 @@ export default function Game1Page() {
                         isRemoved={false}
                         onClick={() => clickLeft(i)}
                         disabled={lock}
+                        shouldPulse={shouldHighlight && !c.isRevealed}
                       />
                     </div>
                   )
@@ -284,11 +358,12 @@ export default function Game1Page() {
                 {rightCards.map((c, i) => {
                   const isCurrentlyMatched = matchedPairs.has(c.saint.id) && selectedRight === i
                   const isWrong = Array.from(wrongPairs).some(pair => pair.endsWith(`-${i}`))
+                  const shouldHighlight = isFirstCardSelected && selectedLeft !== null && selectedRight === null
                   
                   return (
                     <div 
                       key={`r-${c.saint.id}`} 
-                      className="animate-in fade-in slide-in-from-right-8 duration-700"
+                      className={`animate-in fade-in slide-in-from-right-8 duration-700 ${shouldHighlight && !c.isRevealed ? 'animate-pulse-strong' : ''}`}
                       style={{ animationDelay: `${i * 50}ms` }}
                     >
                       <SaintCard
@@ -301,6 +376,7 @@ export default function Game1Page() {
                         isRemoved={false}
                         onClick={() => clickRight(i)}
                         disabled={lock}
+                        shouldHighlight={shouldHighlight && !c.isRevealed}
                       />
                     </div>
                   )
@@ -328,8 +404,36 @@ export default function Game1Page() {
           75% { transform: translateX(10px); }
         }
         
+        @keyframes pulse-gentle {
+          0%, 100% {
+            opacity: 0.8;
+            box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.2);
+          }
+          50% {
+            opacity: 1;
+            box-shadow: 0 0 30px 0 rgba(251, 191, 36, 0.3);
+          }
+        }
+        
+        @keyframes pulse-strong {
+          0%, 100% {
+            opacity: 0.85;
+          }
+          50% {
+            opacity: 1;
+          }
+        }
+        
         .animate-shake {
           animation: shake 0.4s ease-in-out;
+        }
+        
+        .animate-pulse-gentle {
+          animation: pulse-gentle 2s ease-in-out infinite;
+        }
+        
+        .animate-pulse-strong {
+          animation: pulse-strong 1.2s ease-in-out infinite;
         }
       `}</style>
     </div>
