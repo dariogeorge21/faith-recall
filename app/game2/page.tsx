@@ -87,7 +87,7 @@ export default function Game2Page() {
         <p className="text-white/60 text-sm mb-2">
           Decode • Answer fast • Earn more points
         </p>
-        <Timer seconds={totalTimeRemaining} size="large" />
+        <Timer seconds={totalTimeRemaining} size="small" />
       </div>
 
       {/* GAME CARD */}
