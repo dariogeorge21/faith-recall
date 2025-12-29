@@ -24,82 +24,310 @@ export const SAINTS_DATA: Saint[] = [
   { id: 6, name: 'Saint Rose of Lima', image: '/images/saints/st.rose.jpg' },
 ]
 
-// --- FULL 50 MULTIPLE-CHOICE QUIZ DATA ---
+// --- FULL 75 MULTIPLE-CHOICE QUIZ DATA ---
 export const BIBLE_QUIZ_DATA: QuizQuestion[] = [
-  // Existing 6 questions (IDs 1-6)
+  // Questions 1-25: New emoji-based Bible quiz questions
   {
     id: 1,
     emojis: ['🌊', '➗', '➡️', '🚶‍♂️'],
     question: 'What is the story?',
     options: [
-      { label: 'A', text: 'Jonah and the Whale' },
-      { label: 'B', text: 'Moses parts the Red Sea' }, // Existing Correct Answer
-      { label: 'C', text: "Noah's Ark" },
-      { label: 'D', text: 'Jesus Walks on Water' }
+      { label: 'A', text: "Noah's Ark" },
+      { label: 'B', text: 'Jonah and the Whale' },
+      { label: 'C', text: 'Moses parts the Red Sea' },
+      { label: 'D', text: 'Crossing the Jordan' }
+    ],
+    correctAnswer: 'C'
+  },
+  {
+    id: 2,
+    emojis: ['🐋', '👤', '🙏'],
+    question: 'What is the story?',
+    options: [
+      { label: 'A', text: "Daniel in the Lion's Den" },
+      { label: 'B', text: 'Jonah and the Whale' },
+      { label: 'C', text: 'Paul in Prison' },
+      { label: 'D', text: "Noah's Ark" }
     ],
     correctAnswer: 'B'
   },
   {
-    id: 2,
-    emojis: ['🌍', '🌳', '🍎', '🐍'],
-    question: 'What is the story?',
-    options: [
-      { label: 'A', text: 'The Garden of Eden' }, // Existing Correct Answer
-      { label: 'B', text: 'The Tower of Babel' },
-      { label: 'C', text: 'The Flood' },
-      { label: 'D', text: 'The Exodus' }
-    ],
-    correctAnswer: 'A'
-  },
-  {
     id: 3,
-    emojis: ['👦', '🪨', '🎯', '👹'],
+    emojis: ['�', '🛶', '🐘', '�'],
     question: 'What is the story?',
     options: [
-      { label: 'A', text: 'David and Goliath' }, // Existing Correct Answer
-      { label: 'B', text: 'Samson and Delilah' },
-      { label: 'C', text: "Daniel in the Lion's Den" },
-      { label: 'D', text: 'Joshua and the Battle of Jericho' }
+      { label: 'A', text: 'Tower of Babel' },
+      { label: 'B', text: 'Creation' },
+      { label: 'C', text: "Noah's Ark" },
+      { label: 'D', text: 'Flood of Egypt' }
     ],
-    correctAnswer: 'A'
+    correctAnswer: 'C'
   },
   {
     id: 4,
-    emojis: ['🍞', '🐟', '👥', '✋'],
+    emojis: ['🦁', '👤', '🙏'],
     question: 'What is the story?',
     options: [
-      { label: 'A', text: 'The Last Supper' },
-      { label: 'B', text: 'Feeding of the 5000' }, // Existing Correct Answer
-      { label: 'C', text: 'The Wedding at Cana' },
-      { label: 'D', text: 'The Parable of the Loaves' }
+      { label: 'A', text: 'Samson and the Lion' },
+      { label: 'B', text: "Daniel in the Lion's Den" },
+      { label: 'C', text: 'David and Goliath' },
+      { label: 'D', text: 'Joseph in Prison' }
     ],
     correctAnswer: 'B'
   },
   {
     id: 5,
-    emojis: ['🚢', '🌊', '🐋', '🙏'],
+    emojis: ['👦', '🪨', '🗡', '�'],
     question: 'What is the story?',
     options: [
-      { label: 'A', text: 'Jonah and the Whale' }, // Existing Correct Answer
-      { label: 'B', text: "Noah's Ark" },
-      { label: 'C', text: "Paul's Shipwreck" },
-      { label: 'D', text: 'Jesus Calms the Storm' }
+      { label: 'A', text: 'Saul becomes King' },
+      { label: 'B', text: 'Samson defeats Philistines' },
+      { label: 'C', text: 'David and Goliath' },
+      { label: 'D', text: 'Joshua at Jericho' }
     ],
-    correctAnswer: 'A'
+    correctAnswer: 'C'
   },
   {
     id: 6,
-    emojis: ['🏠', '👨‍👩‍👧‍👦', '🎁', '👶'],
+    emojis: ['🧔', '🌾', '😴', '🐄'],
     question: 'What is the story?',
     options: [
-      { label: 'A', text: 'The Birth of Jesus' }, // Existing Correct Answer
-      { label: 'B', text: 'The Prodigal Son' },
-      { label: 'C', text: 'The Good Samaritan' },
-      { label: 'D', text: 'The Nativity' }
+      { label: 'A', text: "Joseph's Coat" },
+      { label: 'B', text: "Pharaoh's Dream" },
+      { label: 'C', text: 'Joseph interprets dreams' },
+      { label: 'D', text: "Daniel's Vision" }
     ],
-    correctAnswer: 'A'
+    correctAnswer: 'C'
   },
-  // --- New Questions Q7 - Q50 (Using the data we generated) ---
+  {
+    id: 7,
+    emojis: ['🏰', '🎺', '🔄'],
+    question: 'What is the story?',
+    options: [
+      { label: 'A', text: 'Tower of Babel' },
+      { label: 'B', text: 'Walls of Jericho' },
+      { label: 'C', text: 'Fall of Jerusalem' },
+      { label: 'D', text: "Samson's Temple" }
+    ],
+    correctAnswer: 'B'
+  },
+  {
+    id: 8,
+    emojis: ['👶', '🌊', '🧺'],
+    question: 'What is the story?',
+    options: [
+      { label: 'A', text: "Samuel's Birth" },
+      { label: 'B', text: 'Baby Moses in the basket' },
+      { label: 'C', text: "Isaac's Birth" },
+      { label: 'D', text: 'Jesus in the Manger' }
+    ],
+    correctAnswer: 'B'
+  },
+  {
+    id: 9,
+    emojis: ['✝️', '👑', '🌿'],
+    question: 'What event is this?',
+    options: [
+      { label: 'A', text: 'Crucifixion' },
+      { label: 'B', text: 'Resurrection' },
+      { label: 'C', text: 'Palm Sunday' },
+      { label: 'D', text: 'Ascension' }
+    ],
+    correctAnswer: 'C'
+  },
+  {
+    id: 10,
+    emojis: ['🍞', '🍷', '✝️'],
+    question: 'What event is this?',
+    options: [
+      { label: 'A', text: 'Wedding at Cana' },
+      { label: 'B', text: 'Feeding the 5000' },
+      { label: 'C', text: 'Last Supper' },
+      { label: 'D', text: 'Emmaus Meal' }
+    ],
+    correctAnswer: 'C'
+  },
+  {
+    id: 11,
+    emojis: ['🍞', '🍞', '🍞', '👥'],
+    question: 'What miracle is this?',
+    options: [
+      { label: 'A', text: 'Water into Wine' },
+      { label: 'B', text: 'Feeding the 5000' },
+      { label: 'C', text: 'Manna from Heaven' },
+      { label: 'D', text: 'Bread of Life' }
+    ],
+    correctAnswer: 'B'
+  },
+  {
+    id: 12,
+    emojis: ['💧', '➡️', '🍷'],
+    question: 'What miracle is this?',
+    options: [
+      { label: 'A', text: 'Healing at Pool' },
+      { label: 'B', text: 'Water into Wine' },
+      { label: 'C', text: 'Walking on Water' },
+      { label: 'D', text: 'Baptism of Jesus' }
+    ],
+    correctAnswer: 'B'
+  },
+  {
+    id: 13,
+    emojis: ['🚶‍♂️', '🌊'],
+    question: 'What miracle is this?',
+    options: [
+      { label: 'A', text: 'Calming the Storm' },
+      { label: 'B', text: 'Jesus walks on water' },
+      { label: 'C', text: 'Red Sea Crossing' },
+      { label: 'D', text: 'Jonah Escapes' }
+    ],
+    correctAnswer: 'B'
+  },
+  {
+    id: 14,
+    emojis: ['⚡', '🌧', '🙏', '🔥'],
+    question: 'Who is this?',
+    options: [
+      { label: 'A', text: 'Moses' },
+      { label: 'B', text: 'Samuel' },
+      { label: 'C', text: 'Elijah on Mount Carmel' },
+      { label: 'D', text: 'Isaiah' }
+    ],
+    correctAnswer: 'C'
+  },
+  {
+    id: 15,
+    emojis: ['🧥', '🌈', '👨'],
+    question: 'What is the story?',
+    options: [
+      { label: 'A', text: 'Adam and Eve' },
+      { label: 'B', text: "Joseph's Coat of Many Colors" },
+      { label: 'C', text: 'King Solomon' },
+      { label: 'D', text: "Aaron's Robe" }
+    ],
+    correctAnswer: 'B'
+  },
+  {
+    id: 16,
+    emojis: ['�', '👦', '👑'],
+    question: 'Who is this?',
+    options: [
+      { label: 'A', text: 'Solomon' },
+      { label: 'B', text: 'Saul' },
+      { label: 'C', text: 'David the Shepherd' },
+      { label: 'D', text: 'Samuel' }
+    ],
+    correctAnswer: 'C'
+  },
+  {
+    id: 17,
+    emojis: ['�', '🌍', '�'],
+    question: 'What is the story?',
+    options: [
+      { label: 'A', text: 'Creation' },
+      { label: 'B', text: 'Tower of Babel' },
+      { label: 'C', text: 'Exodus' },
+      { label: 'D', text: 'Promised Land' }
+    ],
+    correctAnswer: 'B'
+  },
+  {
+    id: 18,
+    emojis: ['🐍', '🪵'],
+    question: 'What is the story?',
+    options: [
+      { label: 'A', text: 'Garden of Eden' },
+      { label: 'B', text: 'Bronze Serpent' },
+      { label: 'C', text: 'Snake of Pharaoh' },
+      { label: 'D', text: 'Temptation of Jesus' }
+    ],
+    correctAnswer: 'B'
+  },
+  {
+    id: 19,
+    emojis: ['👑', '⚖️', '🧠'],
+    question: 'Who is this?',
+    options: [
+      { label: 'A', text: 'David' },
+      { label: 'B', text: 'Saul' },
+      { label: 'C', text: 'King Solomon' },
+      { label: 'D', text: 'Rehoboam' }
+    ],
+    correctAnswer: 'C'
+  },
+  {
+    id: 20,
+    emojis: ['👼', '👧', '🙏'],
+    question: 'Who is this?',
+    options: [
+      { label: 'A', text: 'Hannah' },
+      { label: 'B', text: 'Mary, Mother of Jesus' },
+      { label: 'C', text: 'Esther' },
+      { label: 'D', text: 'Ruth' }
+    ],
+    correctAnswer: 'B'
+  },
+  {
+    id: 21,
+    emojis: ['👸', '📜', '🙏'],
+    question: 'Who is this?',
+    options: [
+      { label: 'A', text: 'Ruth' },
+      { label: 'B', text: 'Deborah' },
+      { label: 'C', text: 'Queen Esther' },
+      { label: 'D', text: 'Bathsheba' }
+    ],
+    correctAnswer: 'C'
+  },
+  {
+    id: 22,
+    emojis: ['�', '', '❤️'],
+    question: 'What is the story?',
+    options: [
+      { label: 'A', text: 'Mary and Martha' },
+      { label: 'B', text: 'Ruth and Naomi' },
+      { label: 'C', text: 'Esther and Mordecai' },
+      { label: 'D', text: 'Rebecca and Isaac' }
+    ],
+    correctAnswer: 'B'
+  },
+  {
+    id: 23,
+    emojis: ['🔥', '🧔', '🚫'],
+    question: 'What event is this?',
+    options: [
+      { label: 'A', text: 'Ten Commandments' },
+      { label: 'B', text: 'Burning Bush' },
+      { label: 'C', text: 'Sinai Thunder' },
+      { label: 'D', text: 'Fire from Heaven' }
+    ],
+    correctAnswer: 'B'
+  },
+  {
+    id: 24,
+    emojis: ['✝️', '🪦', '🌅'],
+    question: 'What event is this?',
+    options: [
+      { label: 'A', text: 'Crucifixion' },
+      { label: 'B', text: 'Burial' },
+      { label: 'C', text: 'Resurrection' },
+      { label: 'D', text: 'Ascension' }
+    ],
+    correctAnswer: 'C'
+  },
+  {
+    id: 25,
+    emojis: ['🕊', '🔥', '👥'],
+    question: 'What event is this?',
+    options: [
+      { label: 'A', text: 'Baptism of Jesus' },
+      { label: 'B', text: 'Transfiguration' },
+      { label: 'C', text: 'Pentecost' },
+      { label: 'D', text: 'Ascension' }
+    ],
+    correctAnswer: 'C'
+  },
+  // --- Questions Q26 - Q75 (Additional questions for variety) ---
   {
     id: 7,
     emojis: ['🌟', '👶', '🐐', '🎁'],
