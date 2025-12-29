@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useGameStore } from '@/store/gameStore'
-import { SAINTS_DATA } from '@/lib/gameData'
+import { getShuffledSaints } from '@/lib/gameData'
 import SaintCard from '@/components/SaintCard'
 import Timer from '@/components/Timer'
 import Image from 'next/image'
@@ -23,6 +23,8 @@ export default function Game1Page() {
   const router = useRouter()
   const { addGame1Score } = useGameStore()
 
+  // Store shuffled saints for this game session
+  const [shuffledSaints] = useState(() => getShuffledSaints())
   const [leftCards, setLeftCards] = useState<Card[]>([])
   const [rightCards, setRightCards] = useState<Card[]>([])
   const [selectedLeft, setSelectedLeft] = useState<number | null>(null)
@@ -45,9 +47,9 @@ export default function Game1Page() {
 
   /* ---------- PRELOAD IMAGES ---------- */
   useEffect(() => {
-    const imageUrls = SAINTS_DATA.map(saint => saint.image)
+    const imageUrls = shuffledSaints.map(saint => saint.image)
     let loadedCount = 0
-    
+
     const preloadImage = (url: string) => {
       return new Promise<void>((resolve, reject) => {
         const img = document.createElement('img')
@@ -79,7 +81,7 @@ export default function Game1Page() {
         lastInteractionRef.current = Date.now()
         startIdleTimer()
       })
-  }, [])
+  }, [shuffledSaints])
 
   /* ---------- IDLE DETECTION FOR HINTS ---------- */
   const startIdleTimer = () => {
@@ -102,32 +104,33 @@ export default function Game1Page() {
   useEffect(() => {
     if (!imagesLoaded) return
 
-    const shuffled = [...SAINTS_DATA].sort(() => Math.random() - 0.5)
-
-    setLeftCards(shuffled.map((s) => ({
+    // Use the already shuffled saints for left column
+    setLeftCards(shuffledSaints.map((s) => ({
       saint: s,
       isRevealed: false,
       isSelected: false,
       isMatched: false,
     })))
 
-    setRightCards([...shuffled].sort(() => Math.random() - 0.5).map((s) => ({
+    // Shuffle again for right column to create different order
+    const rightShuffled = [...shuffledSaints].sort(() => Math.random() - 0.5)
+    setRightCards(rightShuffled.map((s) => ({
       saint: s,
       isRevealed: false,
       isSelected: false,
       isMatched: false,
     })))
-  }, [imagesLoaded])
+  }, [imagesLoaded, shuffledSaints])
 
   /* ---------- AUTO-TRANSITION ON COMPLETION ---------- */
   useEffect(() => {
     if (!gameStarted) return
     // If all cards are filtered out, the game is complete
-    if (leftCards.length === 0 && SAINTS_DATA.length > 0) {
+    if (leftCards.length === 0 && shuffledSaints.length > 0) {
       const timer = setTimeout(() => router.push('/game2'), 2000)
       return () => clearTimeout(timer)
     }
-  }, [leftCards, router, gameStarted])
+  }, [leftCards, router, gameStarted, shuffledSaints])
 
   /* ---------- TIMER ---------- */
   useEffect(() => {
@@ -262,7 +265,7 @@ export default function Game1Page() {
         </div>
 
         {/* GAME COMPLETION CELEBRATION */}
-        {leftCards.length === 0 && SAINTS_DATA.length > 0 && (
+        {leftCards.length === 0 && shuffledSaints.length > 0 && (
           <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-500">
             <div className="text-center space-y-6 animate-in zoom-in duration-700">
               <div className="text-8xl">🎊</div>

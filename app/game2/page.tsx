@@ -3,22 +3,20 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useGameStore } from '@/store/gameStore'
-import { BIBLE_QUIZ_DATA } from '@/lib/gameData'
 import QuizQuestion from '@/components/QuizQuestion'
 import Timer from '@/components/Timer'
 
 export default function Game2Page() {
   const router = useRouter()
-  const { addGame2Score } = useGameStore()
+  const { addGame2Score, quizQuestions, initGame2Questions } = useGameStore()
 
-  const [questions, setQuestions] = useState<typeof BIBLE_QUIZ_DATA>([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [totalTimeRemaining, setTotalTimeRemaining] = useState(90)
   const [questionTimeLeft, setQuestionTimeLeft] = useState(15)
 
-  /* INIT */
+  /* INIT - Randomize questions when Game 2 starts */
   useEffect(() => {
-    setQuestions([...BIBLE_QUIZ_DATA])
+    initGame2Questions(10) // Get 10 random questions with shuffled options
   }, [])
 
   /* GLOBAL TIMER */
@@ -55,7 +53,7 @@ export default function Game2Page() {
   }, [questionTimeLeft])
 
   const next = () => {
-    if (currentQuestionIndex < questions.length - 1) {
+    if (currentQuestionIndex < quizQuestions.length - 1) {
       setCurrentQuestionIndex((p) => p + 1)
     } else {
       router.push('/verify-code')
@@ -63,7 +61,7 @@ export default function Game2Page() {
   }
 
   const onAnswer = (ans: string, time: number) => {
-    const current = questions[currentQuestionIndex]
+    const current = quizQuestions[currentQuestionIndex]
     if (!current) return
 
     if (ans === current.correctAnswer) {
@@ -74,7 +72,7 @@ export default function Game2Page() {
   }
 
   // 🔒 SAFETY GUARD (NO UI CHANGE)
-  if (!questions.length || !questions[currentQuestionIndex]) return null
+  if (!quizQuestions.length || !quizQuestions[currentQuestionIndex]) return null
 
   return (
     <div className="h-screen w-screen overflow-hidden flex flex-col bg-gradient-to-br from-[#05070f] via-[#0b1020] to-[#090312]">
@@ -105,13 +103,13 @@ export default function Game2Page() {
           "
         >
           <div className="text-center text-white/50 text-sm mb-1">
-            Question {currentQuestionIndex + 1} of {questions.length}
+            Question {currentQuestionIndex + 1} of {quizQuestions.length}
           </div>
 
           <div className="flex-1 flex items-start justify-center">
             <div className="w-full max-w-5xl scale-[0.92] origin-top">
               <QuizQuestion
-                question={questions[currentQuestionIndex]}
+                question={quizQuestions[currentQuestionIndex]}
                 onAnswer={onAnswer}
                 timeLimit={questionTimeLeft}
               />
