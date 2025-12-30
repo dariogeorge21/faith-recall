@@ -215,11 +215,24 @@ export default function LeaderboardPage() {
           </div>
         )}
 
+        {/* Top 3 Podium Section */}
+        {!loading && !error && players.length > 0 && (
+          <div className="mb-8 shrink-0">
+            <h2 className="text-center text-sm font-bold uppercase tracking-widest text-white/60 mb-6">
+              🏆 Top Performers
+            </h2>
+            <TopThreePodium players={players.slice(0, 3)} />
+          </div>
+        )}
+
+        {/* Main Leaderboard List */}
         <div className="flex-1 overflow-y-auto space-y-3">
           {loading ? (
             <div className="text-center text-white/60 py-20">Loading…</div>
           ) : error ? (
             <div className="text-center text-red-400 py-20">{error}</div>
+          ) : players.length === 0 ? (
+            <div className="text-center text-white/60 py-20">No players yet</div>
           ) : (
             players.map((player, index) => (
               <LeaderboardRow
@@ -236,7 +249,7 @@ export default function LeaderboardPage() {
             onClick={() => router.push('/')}
             className="rounded-xl bg-white/10 px-8 py-4 font-bold text-white hover:bg-white/20 transition"
           >
-            Back to Home
+            Play Game
           </button>
         </div>
       </div>
@@ -245,6 +258,98 @@ export default function LeaderboardPage() {
 }
 
 /* ======================= ROW ======================= */
+
+/* ======================= TOP 3 PODIUM ======================= */
+
+function TopThreePodium({ players }: { players: Player[] }) {
+  // Ensure we have at most 3 players
+  const topPlayers = players.slice(0, 3)
+
+  // Define podium styling for each position
+  const getPodiumStyle = (position: number) => {
+    switch (position) {
+      case 1: // Gold - 1st place (center, elevated)
+        return {
+          container: 'col-span-1 md:col-span-1 order-2 md:order-2',
+          card: 'bg-gradient-to-br from-amber-500/20 via-amber-600/10 to-amber-900/5 border-amber-400/40 shadow-[0_0_30px_rgba(251,191,36,0.2)]',
+          medal: '🥇',
+          medalSize: 'text-5xl',
+          nameSize: 'text-xl',
+          scoreSize: 'text-3xl',
+          height: 'h-80',
+          bgGradient: 'from-amber-400 to-amber-600',
+        }
+      case 2: // Silver - 2nd place (left)
+        return {
+          container: 'col-span-1 md:col-span-1 order-1 md:order-1',
+          card: 'bg-gradient-to-br from-slate-400/15 via-slate-500/10 to-slate-900/5 border-slate-300/30 shadow-[0_0_20px_rgba(148,163,184,0.15)]',
+          medal: '🥈',
+          medalSize: 'text-4xl',
+          nameSize: 'text-lg',
+          scoreSize: 'text-2xl',
+          height: 'h-72',
+          bgGradient: 'from-slate-300 to-slate-500',
+        }
+      case 3: // Bronze - 3rd place (right)
+        return {
+          container: 'col-span-1 md:col-span-1 order-3 md:order-3',
+          card: 'bg-gradient-to-br from-orange-700/15 via-orange-800/10 to-orange-900/5 border-orange-600/30 shadow-[0_0_20px_rgba(194,102,0,0.15)]',
+          medal: '🥉',
+          medalSize: 'text-4xl',
+          nameSize: 'text-lg',
+          scoreSize: 'text-2xl',
+          height: 'h-72',
+          bgGradient: 'from-orange-600 to-orange-800',
+        }
+      default:
+        return null
+    }
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+      {topPlayers.map((player, index) => {
+        const position = index + 1
+        const style = getPodiumStyle(position)
+
+        if (!style) return null
+
+        return (
+          <div key={player.id} className={style.container}>
+            <div
+              className={`${style.card} rounded-2xl border p-6 flex flex-col items-center justify-between transition-transform hover:scale-105 ${style.height}`}
+            >
+              {/* Medal */}
+              <div className={`${style.medalSize} mb-2`}>{style.medal}</div>
+
+              {/* Position Badge */}
+              <div
+                className={`bg-gradient-to-r ${style.bgGradient} text-white text-xs font-bold px-3 py-1 rounded-full mb-3`}
+              >
+                #{position}
+              </div>
+
+              {/* Player Name */}
+              <div className="text-center mb-2">
+                <p className={`${style.nameSize} font-bold text-white`}>
+                  {player.name}
+                </p>
+                <p className="text-xs text-white/50 mt-1">{player.region}</p>
+              </div>
+
+              {/* Score */}
+              <div className={`${style.scoreSize} font-extrabold text-white`}>
+                {player.score.toLocaleString()}
+              </div>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+/* ======================= LEADERBOARD ROW ======================= */
 
 function LeaderboardRow({
   rank,
