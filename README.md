@@ -51,17 +51,7 @@ A complete, production-ready two-stage Catholic memory & knowledge game for chur
      ```
 
 4. **Add saint images:**
-   - Place 10 PNG images in `/public/images/saints/`:
-     - `peter.png`
-     - `sebastian.png`
-     - `francis.png`
-     - `therese.png`
-     - `matthew.png`
-     - `mark.png`
-     - `luke.png`
-     - `john.png`
-     - `paul.png`
-     - `joseph.png`
+   - Place PNG images in `/public/images/saints/`:
    - Recommended size: 300x400px (portrait aspect ratio)
 
 5. **Run the development server:**
